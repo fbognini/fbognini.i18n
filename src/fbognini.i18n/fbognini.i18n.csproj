@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>fbognini.i18n</PackageId>
+    <TargetFramework>net6.0</TargetFramework>
+    <Version>6.0.0</Version>
+    <Authors>Francesco Bognini</Authors>
+    <Company>Francesco Bognini</Company>
+    <PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fbognini/fbognini.i18n</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+  </ItemGroup>
+
+</Project>

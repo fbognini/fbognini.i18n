@@ -1,4 +1,6 @@
 ﻿using fbognini.i18n.Persistence;
+using fbognini.i18n.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 using Snickler.EFCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,17 @@ namespace fbognini.i18n
         public List<string> Languages => context.Languages
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
+
+        public async Task<List<Language>> GetLanguages(bool isActive, CancellationToken cancellationToken = default)
+        {
+            var query = context.Languages.AsQueryable();
+            if (isActive)
+            {
+                query = query.Where(x => x.IsActive);
+            }
+
+            return await query.ToListAsync(cancellationToken);
+        }
 
         public async Task<int> NewTranslation(int? id = null, string defaultString = null, CancellationToken cancellationToken = default)
         {

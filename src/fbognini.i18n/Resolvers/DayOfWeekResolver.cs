@@ -5,8 +5,8 @@ namespace fbognini.i18n
 {
     public class DayOfWeekResolver : IMemberValueResolver<object, object, int, string>
     {
-        private readonly Ii18nRepository localizer;
-        public DayOfWeekResolver(Ii18nRepository localizer)
+        private readonly II18nRepository localizer;
+        public DayOfWeekResolver(II18nRepository localizer)
         {
             this.localizer = localizer;
         }

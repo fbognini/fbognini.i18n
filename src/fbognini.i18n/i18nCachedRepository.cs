@@ -1,27 +1,26 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using fbognini.i18n.Persistence;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 
 namespace fbognini.i18n
 {
-    public class i18nCachedRepository: Ii18nRepository
+    public class I18nCachedRepository: I18nRepository, II18nRepository
     {
-        private Ii18nRepository repository;
         private IMemoryCache cache;
         private MemoryCacheEntryOptions cacheOptions;
 
-        // alternatively use IDistributedCache if you use redis and multiple services
-        public i18nCachedRepository(Ii18nRepository repository, IMemoryCache cache)
+        public I18nCachedRepository(I18nContext context, IMemoryCache cache)
+            : base(context)
         {
-            this.repository = repository;
             this.cache = cache;
 
-            // 1 day caching
+            // 6 hours caching
             cacheOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(relative: TimeSpan.FromHours(6));
         }
 
-        public string BaseUriResource
+        public new string BaseUriResource
         {
             get
             {
@@ -30,7 +29,7 @@ namespace fbognini.i18n
                 if (value != null)
                     return value;
 
-                value = repository.BaseUriResource;
+                value = base.BaseUriResource;
                 if (value != null)
                     cache.Set(key, value, cacheOptions);
 
@@ -38,21 +37,21 @@ namespace fbognini.i18n
             }
         }
 
-        public string Translate(string language, int source)
+        public new string Translate(string language, int source)
         {
             string key = $"{language}_{source}";
             var value = cache.Get<string>(key);
             if (value != null)
                 return value;
 
-            value = repository.Translate(language, source);
+            value = base.Translate(language, source);
             if (value != null)
                 cache.Set(key, value, cacheOptions);
 
             return value;
         }
 
-        public List<string> Languages
+        public new List<string> Languages
         {
             get
             {
@@ -61,7 +60,7 @@ namespace fbognini.i18n
                 if (value != null)
                     return value;
 
-                value = repository.Languages;
+                value = base.Languages;
                 if (value != null)
                     cache.Set(key, value, cacheOptions);
 

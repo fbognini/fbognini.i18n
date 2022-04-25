@@ -1,15 +1,18 @@
 ﻿using fbognini.i18n.Persistence;
+using Snickler.EFCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace fbognini.i18n
 {
-    public class i18nRepository : Ii18nRepository
+    public class I18nRepository : II18nRepository
     {
-        private i18nContext context;
+        private I18nContext context;
         private string baseUriResource;
 
-        public i18nRepository(i18nContext context)
+        public I18nRepository(I18nContext context)
         {
             this.context = context;
         }
@@ -32,7 +35,20 @@ namespace fbognini.i18n
         }
 
         public List<string> Languages => context.Languages
-            //.Where(x => x.IsActive)
+            .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
+
+        public async Task<int> NewTranslation(int? id = null, string defaultString = null, CancellationToken cancellationToken = default)
+        {
+            await context.LoadStoredProc($"[i18n].[NewTranslation]", commandTimeout: 120)
+                .WithSqlParam("@Id", id)
+                .WithSqlParam("@DefaultString", defaultString)
+                .ExecuteStoredProcAsync(System.Data.CommandBehavior.Default, cancellationToken, true, (handler) =>
+                {
+                    id = handler.ReadToValue<int>();
+                });
+
+            return id.Value;
+        }
     }
 }

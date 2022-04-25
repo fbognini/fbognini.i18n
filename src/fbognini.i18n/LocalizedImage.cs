@@ -1,6 +1,6 @@
 ﻿namespace fbognini.i18n
 {
-    public class LocalizedImageDto
+    public class LocalizedImage
     {
         public string LanguageId { get; set; }
         public string PictureUrl { get; set; }

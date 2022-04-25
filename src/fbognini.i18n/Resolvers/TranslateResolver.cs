@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using System.Threading;
 
-namespace fbognini.i18n
+namespace fbognini.i18n.Resolvers
 {
     public class TranslateResolver : IMemberValueResolver<object, object, int, string>, IMemberValueResolver<object, object, int?, string>
     {
-        private readonly Ii18nRepository localizer;
-        public TranslateResolver(Ii18nRepository localizer)
+        private readonly II18nRepository localizer;
+        public TranslateResolver(II18nRepository localizer)
         {
             this.localizer = localizer;
         }

@@ -7,8 +7,15 @@ namespace fbognini.i18n.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Entities.Configuration> builder)
         {
-            builder.ToTable(nameof(i18nContext.Configurations), "i18n");
-            builder.HasKey(s => s.Code);
+            builder.ToTable(nameof(I18nContext.Configurations), "i18n");
+            builder.HasKey(s => s.Id);
+
+            builder.Property(x => x.Id)
+                .HasMaxLength(5)
+                .IsFixedLength();
+
+            builder.Property(x => x.BaseUriResource)
+                .HasMaxLength(200);
         }
     }
 }

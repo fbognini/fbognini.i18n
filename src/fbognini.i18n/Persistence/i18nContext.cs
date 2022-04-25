@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using fbognini.i18n.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
 namespace fbognini.i18n.Persistence
 {
-    public class i18nContext : DbContext
+    public class I18nContext : DbContext
     {
         //protected readonly IConfiguration Configuration;
 
-        public i18nContext(DbContextOptions<i18nContext> options) : base(options)
+        public I18nContext(DbContextOptions<I18nContext> options) : base(options)
         {
         }
 
@@ -19,8 +20,8 @@ namespace fbognini.i18n.Persistence
             base.OnModelCreating(modelBuilder);
         }
 
-        internal DbSet<Entities.Language> Languages { get; set; }
-        internal DbSet<Entities.Translation> Translations { get; set; }
-        internal DbSet<Entities.Configuration> Configurations { get; set; }
+        internal DbSet<Language> Languages { get; set; }
+        internal DbSet<Translation> Translations { get; set; }
+        internal DbSet<Configuration> Configurations { get; set; }
     }
 }

@@ -2,7 +2,8 @@
 {
     public class Configuration
     {
-        public string Code { get; set; }
+        public string Id { get; set; }
         public string BaseUriResource { get; set; }
+        public int Sequence { get; set; }
     }
 }

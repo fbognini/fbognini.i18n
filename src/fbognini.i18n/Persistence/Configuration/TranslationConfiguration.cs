@@ -7,7 +7,7 @@ namespace fbognini.i18n.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Entities.Translation> builder)
         {
-            builder.ToTable(nameof(i18nContext.Translations), "i18n");
+            builder.ToTable(nameof(I18nContext.Translations), "i18n");
             builder.HasKey(s => new { s.LanguageId, s.Source });
         }
     }

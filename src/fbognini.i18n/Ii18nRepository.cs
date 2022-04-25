@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace fbognini.i18n
 {
-    public interface Ii18nRepository
+    public interface II18nRepository
     {
         string BaseUriResource { get; }
         string Translate(string language, int source);
         List<string> Languages { get; }
+
+        Task<int> NewTranslation(int? id = null, string defaultString = null, CancellationToken cancellationToken = default);
     }
 }

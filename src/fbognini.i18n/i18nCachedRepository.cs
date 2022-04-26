@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace fbognini.i18n
 {
-    public class I18nCachedRepository: I18nRepository, II18nRepository
+    internal class I18nCachedRepository: I18nRepository, II18nRepository
     {
         private IMemoryCache cache;
         private MemoryCacheEntryOptions cacheOptions;

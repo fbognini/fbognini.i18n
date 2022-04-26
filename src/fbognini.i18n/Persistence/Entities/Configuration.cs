@@ -4,6 +4,5 @@
     {
         public string Id { get; set; }
         public string BaseUriResource { get; set; }
-        public int Sequence { get; set; }
     }
 }

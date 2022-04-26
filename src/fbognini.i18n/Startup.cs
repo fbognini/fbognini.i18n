@@ -18,6 +18,8 @@ namespace fbognini.i18n
         {
             var settings = configuration.GetSection("i18n").Get<Settings>();
 
+            services.AddSingleton(settings.Context);
+
             if (settings.UseCache)
             {
                 services.AddMemoryCache();

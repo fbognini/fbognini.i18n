@@ -7,8 +7,11 @@ namespace fbognini.i18n.Persistence.Languages
     {
         public void Configure(EntityTypeBuilder<Entities.Language> builder)
         {
-            builder.ToTable(nameof(I18nContext.Languages), "i18n");
             builder.HasKey(s => s.Id);
+
+            builder.Property(x => x.Id)
+                .HasMaxLength(5)
+                .IsFixedLength();
 
             builder.Property(s => s.Description)
                 .HasMaxLength(100);

@@ -5,12 +5,15 @@ using System.Reflection;
 
 namespace fbognini.i18n.Persistence
 {
-    public class I18nContext : DbContext
+    internal class I18nContext : DbContext
     {
+        private readonly ContextSettings settings;
+
         //protected readonly IConfiguration Configuration;
 
-        public I18nContext(DbContextOptions<I18nContext> options) : base(options)
+        public I18nContext(DbContextOptions<I18nContext> options, ContextSettings settings) : base(options)
         {
+            this.settings = settings;
         }
 
 
@@ -18,10 +21,13 @@ namespace fbognini.i18n.Persistence
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasDefaultSchema(settings.Schema);
         }
 
         internal DbSet<Language> Languages { get; set; }
         internal DbSet<Translation> Translations { get; set; }
         internal DbSet<Configuration> Configurations { get; set; }
+        internal DbSet<Text> Texts { get; set; }
     }
 }

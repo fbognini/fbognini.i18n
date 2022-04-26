@@ -1,4 +1,5 @@
 ﻿using fbognini.i18n.Persistence.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace fbognini.i18n
         List<string> Languages { get; }
 
         Task<List<Language>> GetLanguages(bool isActive, CancellationToken cancellationToken = default);
-
-        Task<int> NewTranslation(int? id = null, string defaultString = null, CancellationToken cancellationToken = default);
+        Task AddText(string id, string group, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default);
+        Task<Dictionary<string, string>> GetTranslations(string language, string group = null, DateTime? since = null, CancellationToken cancellationToken = default);
     }
 }

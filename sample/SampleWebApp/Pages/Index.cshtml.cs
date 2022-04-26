@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using fbognini.i18n;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace SampleWebApp.Pages
@@ -6,15 +7,23 @@ namespace SampleWebApp.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
+        private readonly II18nRepository i18NRepository;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, II18nRepository i18NRepository)
         {
             _logger = logger;
+            this.i18NRepository = i18NRepository;
         }
 
-        public void OnGet()
+        public async Task OnGet()
         {
+            await i18NRepository.AddText("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
+            {
+                ["it-IT"] = "italiano2",
+                ["en-GB"] = "inglese2",
+            });
 
+            var translations = await i18NRepository.GetTranslations("it-IT");
         }
     }
 }

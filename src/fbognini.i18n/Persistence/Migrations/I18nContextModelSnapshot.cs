@@ -53,6 +53,9 @@ namespace fbognini.i18n.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.ToTable("Languages", "i18n");

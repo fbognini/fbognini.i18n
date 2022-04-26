@@ -12,7 +12,7 @@ using fbognini.i18n.Persistence;
 namespace fbognini.i18n.Persistence.Migrations
 {
     [DbContext(typeof(I18nContext))]
-    [Migration("20220426162930_I18N_InitialMigration")]
+    [Migration("20220426230818_I18N_InitialMigration")]
     partial class I18N_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,9 @@ namespace fbognini.i18n.Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

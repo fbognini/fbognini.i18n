@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>fbognini.i18n</PackageId>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>6.0.2</Version>
+    <Version>6.0.3</Version>
     <Authors>Francesco Bognini</Authors>
     <Company>Francesco Bognini</Company>
     <PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>

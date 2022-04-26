@@ -32,7 +32,8 @@ namespace fbognini.i18n.Persistence.Migrations
                 {
                     Id = table.Column<string>(type: "nchar(5)", fixedLength: true, maxLength: 5, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

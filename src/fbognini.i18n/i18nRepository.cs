@@ -120,6 +120,18 @@ namespace fbognini.i18n
 
         public async Task<Dictionary<string, string>> GetTranslations(string language, string group = null, DateTime? since = null, CancellationToken cancellationToken = default)
         {
+            var lang = await context.Languages.FindAsync(language, cancellationToken);
+            if (lang == null)
+            {
+                lang = await context.Languages.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);
+                if (lang == null)
+                {
+                    return new Dictionary<string, string>();
+                }
+
+                language = lang.Id;
+            }
+
             var query = context.Translations
                 .AsNoTracking()
                 .Include(x => x.Text)

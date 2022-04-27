@@ -1,4 +1,6 @@
-﻿namespace fbognini.i18n
+﻿using System.Collections.Generic;
+
+namespace fbognini.i18n
 {
     internal class ContextSettings
     {
@@ -10,6 +12,22 @@
         public string Schema { get; set; }
     }
 
+    internal class LocalizerSettings
+    {
+        public LocalizerSettings()
+        {
+            RemovePrefixs = new List<string>();
+            RemoveSuffixs = new List<string>();
+        }
+
+        public string OverrideResourceId { get; set; }
+        public string BaseResourceId { get; set; }
+        public List<string> RemovePrefixs { get; set; }
+        public List<string> RemoveSuffixs { get; set; }
+
+        public bool CreateNewRecordWhenDoesNotExists { get; set; }
+    }
+
     internal class Settings
     {
         public Settings()
@@ -18,8 +36,7 @@
         }
         public string ConnectionString { get; set; }
         public bool UseCache { get; set; }
-        public bool UseRequestLocalization { get; set; }
         public ContextSettings Context { get; set; }
-
+        public LocalizerSettings Localizer { get; set; }
     }
 }

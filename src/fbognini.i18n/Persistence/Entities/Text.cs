@@ -5,8 +5,8 @@ namespace fbognini.i18n.Persistence.Entities
 {
     public class Text
     {
-        public string Id { get; set; }
-        public string Group { get; set; }
+        public string TextId { get; set; }
+        public string ResourceId { get; set; }
         public string Description { get; set; }
         public DateTime Created { get; set; }
 

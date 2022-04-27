@@ -12,7 +12,7 @@ using fbognini.i18n.Persistence;
 namespace fbognini.i18n.Persistence.Migrations
 {
     [DbContext(typeof(I18nContext))]
-    [Migration("20220426230818_I18N_InitialMigration")]
+    [Migration("20220427114007_I18N_InitialMigration")]
     partial class I18N_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,9 +65,13 @@ namespace fbognini.i18n.Persistence.Migrations
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Text", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("TextId")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ResourceId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -76,11 +80,7 @@ namespace fbognini.i18n.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Group")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
+                    b.HasKey("TextId", "ResourceId");
 
                     b.ToTable("Texts", "i18n");
                 });
@@ -93,6 +93,9 @@ namespace fbognini.i18n.Persistence.Migrations
                     b.Property<string>("TextId")
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("ResourceId")
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Destination")
                         .HasColumnType("nvarchar(max)");
 
@@ -101,9 +104,9 @@ namespace fbognini.i18n.Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
-                    b.HasKey("LanguageId", "TextId");
+                    b.HasKey("LanguageId", "TextId", "ResourceId");
 
-                    b.HasIndex("TextId");
+                    b.HasIndex("TextId", "ResourceId");
 
                     b.ToTable("Translations", "i18n");
                 });
@@ -118,7 +121,7 @@ namespace fbognini.i18n.Persistence.Migrations
 
                     b.HasOne("fbognini.i18n.Persistence.Entities.Text", "Text")
                         .WithMany("Translations")
-                        .HasForeignKey("TextId")
+                        .HasForeignKey("TextId", "ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

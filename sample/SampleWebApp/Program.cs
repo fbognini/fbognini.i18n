@@ -26,7 +26,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 
-await app.InitializeI18N(builder.Configuration);
+await app.InitializeI18N();
+await app.UseRequestLocalizationI18N();
 
 
 app.UseRequestLocalization();

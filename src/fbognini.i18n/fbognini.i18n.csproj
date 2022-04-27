@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>fbognini.i18n</PackageId>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>6.0.4</Version>
+    <Version>6.0.5</Version>
     <Authors>Francesco Bognini</Authors>
     <Company>Francesco Bognini</Company>
     <PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>
@@ -12,12 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.4" />
     <PackageReference Include="Snickler.EFCore" Version="3.0.0" />
   </ItemGroup>
 

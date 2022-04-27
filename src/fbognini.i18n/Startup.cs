@@ -1,9 +1,11 @@
-﻿using fbognini.i18n.Persistence;
+﻿using fbognini.i18n.Localizers;
+using fbognini.i18n.Persistence;
 using fbognini.i18n.Resolvers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +20,19 @@ namespace fbognini.i18n
         public static IServiceCollection AddI18N(this IServiceCollection services, IConfiguration configuration)
         {
             var settings = configuration.GetSection("i18n").Get<Settings>();
-            services.AddSingleton(settings.Context);
+            services.AddSingleton(settings.Context ?? new ContextSettings());
+            services.AddSingleton(settings.Localizer ?? new LocalizerSettings());
+
+            services.AddLocalization();
 
             if (settings.UseCache)
             {
                 services.AddMemoryCache();
-                services.AddScoped<II18nRepository, I18nCachedRepository>();
+                services.AddSingleton<II18nRepository, I18nCachedRepository>();
             }
             else 
             { 
-                services.AddScoped<II18nRepository, I18nRepository>();
+                services.AddSingleton<II18nRepository, I18nRepository>();
             }
 
             services.AddTransient<TranslateResolver>();
@@ -37,8 +42,13 @@ namespace fbognini.i18n
 
             services.AddTransient<ImageAllLocalizedPathResolver>();
             services.AddTransient<ImageNotLocalizedPathResolver>();
-            services.AddDbContext<I18nContext>(options => options
-                    .UseSqlServer(settings.ConnectionString));
+            services.AddDbContext<I18nContext>(options => 
+                options.UseSqlServer(settings.ConnectionString),
+                    ServiceLifetime.Singleton,
+                    ServiceLifetime.Singleton);
+
+            services.AddSingleton<IStringLocalizerFactory, EFStringLocalizerFactory>();
+            services.AddSingleton<IExtendedStringLocalizerFactory, EFStringLocalizerFactory>();
 
             return services;
         }
@@ -55,7 +65,7 @@ namespace fbognini.i18n
                 await context.Database.MigrateAsync(cancellationToken);
             }
         }
-        public static async Task InitializeI18N(this IApplicationBuilder app, IConfiguration configuration, CancellationToken cancellationToken = default)
+        public static async Task<IApplicationBuilder> InitializeI18N(this IApplicationBuilder app, CancellationToken cancellationToken = default)
         {
             // Create a new scope to retrieve scoped services
             using var scope = app.ApplicationServices.CreateScope();
@@ -67,9 +77,12 @@ namespace fbognini.i18n
                 await context.Database.MigrateAsync(cancellationToken);
             }
 
-            var settings = configuration.GetSection("i18n").Get<Settings>();
-            if (!settings.UseRequestLocalization)
-                return;
+            return app;
+        }
+
+        public static async Task<IApplicationBuilder> UseRequestLocalizationI18N(this IApplicationBuilder app, CancellationToken cancellationToken = default)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
 
             var repository = scope.ServiceProvider.GetRequiredService<II18nRepository>();
             var languages = await repository.GetLanguages(cancellationToken);
@@ -89,6 +102,8 @@ namespace fbognini.i18n
 
                 app.UseRequestLocalization(options);
             }
+
+            return app;
         }
 
     }

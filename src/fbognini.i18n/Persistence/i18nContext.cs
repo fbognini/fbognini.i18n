@@ -1,6 +1,7 @@
 ﻿using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 using System.Reflection;
 
 namespace fbognini.i18n.Persistence
@@ -16,7 +17,6 @@ namespace fbognini.i18n.Persistence
             this.settings = settings;
         }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -29,5 +29,12 @@ namespace fbognini.i18n.Persistence
         internal DbSet<Translation> Translations { get; set; }
         internal DbSet<Configuration> Configurations { get; set; }
         internal DbSet<Text> Texts { get; set; }
+
+        public void DetachAllEntities()
+        {
+            var changedEntriesCopy = ChangeTracker.Entries().ToList();
+            foreach (var entry in changedEntriesCopy)
+                entry.State = EntityState.Detached;
+        }
     }
 }

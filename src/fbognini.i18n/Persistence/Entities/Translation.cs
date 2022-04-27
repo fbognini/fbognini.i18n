@@ -6,6 +6,7 @@ namespace fbognini.i18n.Persistence.Entities
     {
         public string LanguageId { get; set; }
         public string TextId { get; set; }
+        public string ResourceId { get; set; }
         public string Destination { get; set; }
         public DateTime Updated { get; set; }
 

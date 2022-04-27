@@ -8,12 +8,12 @@ namespace fbognini.i18n.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Entities.Text> builder)
         {
-            builder.HasKey(s => new { s.Id });
+            builder.HasKey(s => new { s.TextId, s.ResourceId });
 
-            builder.Property(x => x.Id)
+            builder.Property(x => x.TextId)
                 .HasMaxLength(100);
 
-            builder.Property(x => x.Group)
+            builder.Property(x => x.ResourceId)
                 .HasMaxLength(50);
 
             builder.Property(x => x.Description)

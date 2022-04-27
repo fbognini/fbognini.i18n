@@ -42,7 +42,7 @@ namespace fbognini.i18n
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
 
-        public async Task<List<Language>> GetLanguages(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Language>> GetLanguages(CancellationToken cancellationToken = default)
         {
             return await context.Languages.ToListAsync(cancellationToken);
         }
@@ -77,7 +77,7 @@ namespace fbognini.i18n
         //    //}
         //}
 
-        public async Task AddText(string id, string group, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> AddText(string textId, string resourceId, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default)
         {
             if (translations == null || !translations.Any())
                 throw new ArgumentException("Translations must be provided");
@@ -108,8 +108,8 @@ namespace fbognini.i18n
 
                 var text = new Text()
                 {
-                    Id = id,
-                    Group = group,
+                    TextId = textId,
+                    ResourceId = resourceId,
                     Description = description,
                     Translations = translations.Select(x => new Translation()
                     {
@@ -124,6 +124,8 @@ namespace fbognini.i18n
                 await context.SaveChangesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+
+                return translations.Select(x => x.Key);
             }
             catch (Exception ex)
             {
@@ -133,28 +135,28 @@ namespace fbognini.i18n
             }
         }
 
-        public async Task<Dictionary<string, string>> GetTranslations(string language, string group = null, DateTime? since = null, CancellationToken cancellationToken = default)
+        public async Task<Dictionary<string, string>> GetTranslations(string languageId, string resourceId = null, DateTime? since = null, CancellationToken cancellationToken = default)
         {
-            var lang = await context.Languages.FindAsync(new[] { language }, cancellationToken: cancellationToken);
-            if (lang == null)
+            var language = await context.Languages.FindAsync(new[] { languageId }, cancellationToken: cancellationToken);
+            if (language == null)
             {
-                lang = await context.Languages.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);
-                if (lang == null)
+                language = await context.Languages.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);
+                if (language == null)
                 {
                     return new Dictionary<string, string>();
                 }
 
-                language = lang.Id;
+                languageId = language.Id;
             }
 
             var query = context.Translations
                 .AsNoTracking()
                 .Include(x => x.Text)
-                .Where(x => x.LanguageId == language);
+                .Where(x => x.LanguageId == languageId);
 
-            if (!string.IsNullOrWhiteSpace(group))
+            if (!string.IsNullOrWhiteSpace(resourceId))
             {
-                query = query.Where(x => x.Text.Group == group);
+                query = query.Where(x => x.Text.ResourceId == resourceId);
             }
 
             if (since.HasValue)
@@ -164,7 +166,7 @@ namespace fbognini.i18n
 
             var translations = await query.ToListAsync(cancellationToken);
 
-            return translations.ToDictionary(x => x.Text.Id, x => x.Destination);
+            return translations.ToDictionary(x => x.Text.TextId, x => x.Destination);
         }
     }
 }

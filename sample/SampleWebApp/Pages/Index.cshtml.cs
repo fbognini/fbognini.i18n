@@ -17,13 +17,15 @@ namespace SampleWebApp.Pages
 
         public async Task OnGet()
         {
-            await i18NRepository.AddText("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
-            {
-                ["it-IT"] = "italiano2",
-                ["en-GB"] = "inglese2",
-            });
+            //await i18NRepository.AddText("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
+            //{
+            //    ["it-IT"] = "italiano2",
+            //    ["en-GB"] = "inglese2",
+            //});
 
-            var translations = await i18NRepository.GetTranslations("it-IT");
+            var language = Thread.CurrentThread.CurrentUICulture.Name;
+
+            var translations = await i18NRepository.GetTranslations(language);
         }
     }
 }

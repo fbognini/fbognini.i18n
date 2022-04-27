@@ -18,6 +18,7 @@
         }
         public string ConnectionString { get; set; }
         public bool UseCache { get; set; }
+        public bool UseRequestLocalization { get; set; }
         public ContextSettings Context { get; set; }
 
     }

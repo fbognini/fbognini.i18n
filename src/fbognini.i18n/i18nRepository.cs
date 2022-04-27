@@ -42,15 +42,9 @@ namespace fbognini.i18n
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
 
-        public async Task<List<Language>> GetLanguages(bool isActive, CancellationToken cancellationToken = default)
+        public async Task<List<Language>> GetLanguages(CancellationToken cancellationToken = default)
         {
-            var query = context.Languages.AsQueryable();
-            if (isActive)
-            {
-                query = query.Where(x => x.IsActive);
-            }
-
-            return await query.ToListAsync(cancellationToken);
+            return await context.Languages.ToListAsync(cancellationToken);
         }
 
         //public async Task<int> GetNextSequence(string id = null, CancellationToken cancellationToken = default)
@@ -85,6 +79,27 @@ namespace fbognini.i18n
 
         public async Task AddText(string id, string group, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default)
         {
+            if (translations == null || !translations.Any())
+                throw new ArgumentException("Translations must be provided");
+
+            var languages = await GetLanguages(cancellationToken);
+            var invalid = translations.Where(t => !languages.Any(l => l.Id == t.Key)).ToList();
+            if (invalid.Any())
+                throw new ArgumentException($"Invalid languages [{string.Join(", ", invalid.Select(x => x.Key))}]");
+
+            var defaultLanguage = languages.FirstOrDefault(x => x.IsDefault);
+            if (defaultLanguage == null)
+            {
+                defaultLanguage = languages.First();
+            }
+
+            var defaultTranslation = translations.ContainsKey(defaultLanguage.Id) ? translations[defaultLanguage.Id] : translations.First().Value;
+
+            foreach (var item in languages.Where(x => !translations.ContainsKey(x.Id)))
+            {
+                translations.Add(item.Id, defaultTranslation);
+            }
+            
             using var transaction = context.Database.BeginTransaction();
 
             try
@@ -120,7 +135,7 @@ namespace fbognini.i18n
 
         public async Task<Dictionary<string, string>> GetTranslations(string language, string group = null, DateTime? since = null, CancellationToken cancellationToken = default)
         {
-            var lang = await context.Languages.FindAsync(language, cancellationToken);
+            var lang = await context.Languages.FindAsync(new[] { language }, cancellationToken: cancellationToken);
             if (lang == null)
             {
                 lang = await context.Languages.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);

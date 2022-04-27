@@ -13,6 +13,8 @@ namespace fbognini.i18n
 {
     internal class I18nRepository : II18nRepository
     {
+        private List<Language> languages;
+
         private I18nContext context;
         private string baseUriResource;
 
@@ -42,47 +44,51 @@ namespace fbognini.i18n
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
 
-        public async Task<IEnumerable<Language>> GetLanguages(CancellationToken cancellationToken = default)
+        public IEnumerable<Language> GetLanguages()
         {
-            return await context.Languages.ToListAsync(cancellationToken);
+            if (languages == null)
+            {
+                lock (context)
+                {
+                    languages = context.Languages.ToList();
+                }
+            }
+
+            return languages;
         }
 
-        //public async Task<int> GetNextSequence(string id = null, CancellationToken cancellationToken = default)
-        //{
-        //    if (id == null)
-        //    {
-        //        id = "TRA";
-        //    }
+        public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)
+        {
+            lock (context)
+            {
+                var query = context.Translations.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(languageId))
+                {
+                    query = query.Where(x => x.LanguageId == languageId);
+                }
+                if (!string.IsNullOrWhiteSpace(textId))
+                {
+                    query = query.Where(x => x.TextId == textId);
+                }
+                if (!string.IsNullOrWhiteSpace(resourceId))
+                {
+                    query = query.Where(x => x.ResourceId == resourceId);
+                }
+                if (since.HasValue)
+                {
+                    query = query.Where(x => x.Updated >= since.Value);
+                }
 
-        //    //using var transaction = context.Database.BeginTransaction(System.Data.IsolationLevel.);
+                return query.ToList();
+            }
+        }
 
-        //    //try
-        //    //{
-        //    //    var configuration = context.Configurations.Find(id);
-        //    //    var source = configuration.Sequence;
-
-        //    //    configuration.Sequence = configuration.Sequence + 1;
-        //    //    await context.SaveChangesAsync(cancellationToken);
-        //    //    // Commit transaction if all commands succeed, transaction will auto-rollback
-        //    //    // when disposed if either commands fails
-        //    //    transaction.Commit();
-
-        //    //    return source;
-        //    //}
-        //    //catch (Exception ex)
-        //    //{
-        //    //    transaction.Rollback();
-
-        //    //    throw;
-        //    //}
-        //}
-
-        public async Task<IEnumerable<string>> AddText(string textId, string resourceId, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default)
+        public IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations)
         {
             if (translations == null || !translations.Any())
                 throw new ArgumentException("Translations must be provided");
 
-            var languages = await GetLanguages(cancellationToken);
+            var languages = GetLanguages();
             var invalid = translations.Where(t => !languages.Any(l => l.Id == t.Key)).ToList();
             if (invalid.Any())
                 throw new ArgumentException($"Invalid languages [{string.Join(", ", invalid.Select(x => x.Key))}]");
@@ -100,73 +106,39 @@ namespace fbognini.i18n
                 translations.Add(item.Id, defaultTranslation);
             }
             
-            using var transaction = context.Database.BeginTransaction();
+            var now = DateTime.Now;
 
-            try
+            var text = new Text()
             {
-                var now = DateTime.Now;
-
-                var text = new Text()
+                TextId = textId,
+                ResourceId = resourceId,
+                Description = description,
+                Created = now,
+                Translations = translations.Select(x => new Translation()
                 {
                     TextId = textId,
                     ResourceId = resourceId,
-                    Description = description,
-                    Translations = translations.Select(x => new Translation()
-                    {
-                        LanguageId = x.Key,
-                        Destination = x.Value,
-                        Updated = now
-                    }).ToList(),
-                    Created = now
-                };
+                    LanguageId = x.Key,
+                    Destination = x.Value,
+                    Updated = now
+                }).ToList()
+            };
 
-                await context.Texts.AddAsync(text, cancellationToken);
-                await context.SaveChangesAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                return translations.Select(x => x.Key);
-            }
-            catch (Exception ex)
+            lock (context)
             {
-                await transaction.RollbackAsync(cancellationToken);
-
-                throw;
+                context.Texts.Add(text);
+                context.SaveChanges();
             }
+
+            return text.Translations;
         }
-
-        public async Task<Dictionary<string, string>> GetTranslations(string languageId, string resourceId = null, DateTime? since = null, CancellationToken cancellationToken = default)
+    
+        public void DetachAllEntities()
         {
-            var language = await context.Languages.FindAsync(new[] { languageId }, cancellationToken: cancellationToken);
-            if (language == null)
+            lock (context)
             {
-                language = await context.Languages.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);
-                if (language == null)
-                {
-                    return new Dictionary<string, string>();
-                }
-
-                languageId = language.Id;
+                context.DetachAllEntities();
             }
-
-            var query = context.Translations
-                .AsNoTracking()
-                .Include(x => x.Text)
-                .Where(x => x.LanguageId == languageId);
-
-            if (!string.IsNullOrWhiteSpace(resourceId))
-            {
-                query = query.Where(x => x.Text.ResourceId == resourceId);
-            }
-
-            if (since.HasValue)
-            {
-                query = query.Where(x => x.Updated >= since.Value);
-            }
-
-            var translations = await query.ToListAsync(cancellationToken);
-
-            return translations.ToDictionary(x => x.Text.TextId, x => x.Destination);
         }
     }
 }

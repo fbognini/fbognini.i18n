@@ -1,4 +1,5 @@
 ﻿using fbognini.i18n.Persistence;
+using fbognini.i18n.Persistence.Entities;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Concurrent;
@@ -15,15 +16,13 @@ namespace fbognini.i18n.Localizers
 
         private static readonly ConcurrentDictionary<string, IStringLocalizer> localizers = new ConcurrentDictionary<string, IStringLocalizer>();
 
-        private readonly I18nContext context;
-        private readonly LocalizerSettings localizerSettings;
         private readonly II18nRepository i18NRepository;
+        private readonly LocalizerSettings localizerSettings;
 
-        public EFStringLocalizerFactory(I18nContext context, LocalizerSettings localizerSettings, II18nRepository i18NRepository)
+        public EFStringLocalizerFactory(II18nRepository i18NRepository, LocalizerSettings localizerSettings)
         {
-            this.context = context;
-            this.localizerSettings = localizerSettings;
             this.i18NRepository = i18NRepository;
+            this.localizerSettings = localizerSettings;
         }
 
         public IStringLocalizer Create(Type resourceSource)
@@ -52,10 +51,7 @@ namespace fbognini.i18n.Localizers
         public void ResetCache()
         {
             localizers.Clear();
-            lock (context)
-            {
-                context.DetachAllEntities();
-            }
+            i18NRepository.DetachAllEntities();
         }
 
         public void ResetCache(Type resourceSource)
@@ -73,20 +69,13 @@ namespace fbognini.i18n.Localizers
             key = NormalizeKey(key);
 
             localizers.TryRemove(key, out _);
-            lock (context)
-            {
-                context.DetachAllEntities();
-            }
+            i18NRepository.DetachAllEntities();
         }
 
-        private Dictionary<string, string> GetResources(string resourceKey)
+        private Dictionary<string, string> GetResources(string resourceId)
         {
-            lock (context)
-            {
-                return context.Translations
-                    .Where(data => data.Text.ResourceId == resourceKey)
+            return i18NRepository.GetTranslations(null, null, resourceId)
                     .ToDictionary(kvp => (kvp.TextId + "." + kvp.LanguageId), kvp => kvp.Destination, StringComparer.OrdinalIgnoreCase);
-            }
         }
 
         public string NormalizeKey(string key)

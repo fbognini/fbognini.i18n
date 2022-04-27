@@ -80,12 +80,12 @@ namespace fbognini.i18n
             return app;
         }
 
-        public static async Task<IApplicationBuilder> UseRequestLocalizationI18N(this IApplicationBuilder app, CancellationToken cancellationToken = default)
+        public static IApplicationBuilder UseRequestLocalizationI18N(this IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.CreateScope();
 
-            var repository = scope.ServiceProvider.GetRequiredService<II18nRepository>();
-            var languages = await repository.GetLanguages(cancellationToken);
+            var service = scope.ServiceProvider.GetRequiredService<II18nRepository>();
+            var languages = service.GetLanguages();
             languages = languages.Where(x => x.IsActive).ToList();
 
             if (languages.Any())

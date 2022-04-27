@@ -12,8 +12,11 @@ namespace fbognini.i18n
         string Translate(string language, int source);
         List<string> Languages { get; }
 
-        Task<IEnumerable<Language>> GetLanguages(CancellationToken cancellationToken = default);
-        Task<IEnumerable<string>> AddText(string textId, string resourceId, string description, Dictionary<string, string> translations, CancellationToken cancellationToken = default);
-        Task<Dictionary<string, string>> GetTranslations(string languageId, string resourceId = null, DateTime? since = null, CancellationToken cancellationToken = default);
+
+        internal void DetachAllEntities();
+
+        IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
+        IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
+        IEnumerable<Language> GetLanguages();
     }
 }

@@ -23,9 +23,15 @@ namespace SampleWebApp.Pages
             //    ["en-GB"] = "inglese2",
             //});
 
-            var language = Thread.CurrentThread.CurrentUICulture.Name;
 
-            var translations = await i18NRepository.GetTranslations(language);
+            var tasks = new List<Task>();
+            for(int i = 0; i < 5; i++)
+            {
+                var http = new HttpClient();
+                tasks.Add(http.GetAsync("https://localhost:5002/localization/texts"));
+            }
+
+            Task.WaitAll(tasks.ToArray());
         }
     }
 }

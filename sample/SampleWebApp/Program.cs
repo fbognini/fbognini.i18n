@@ -27,10 +27,8 @@ app.UseRouting();
 
 
 await app.InitializeI18N();
-await app.UseRequestLocalizationI18N();
 
-
-app.UseRequestLocalization();
+app.UseRequestLocalizationI18N();
 
 app.UseAuthorization();
 

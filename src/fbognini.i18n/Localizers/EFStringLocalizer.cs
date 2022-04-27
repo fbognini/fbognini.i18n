@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using fbognini.i18n.Persistence.Entities;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -43,14 +44,8 @@ namespace fbognini.i18n.Localizers
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            throw new NotImplementedException();
+            return translations.Select(x => new LocalizedString(x.Key, x.Value));
         }
-
-        public IStringLocalizer WithCulture(CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
 
         private string GetText(string id, out bool error)
         {
@@ -66,34 +61,30 @@ namespace fbognini.i18n.Localizers
             string computedKey = $"{id}.{culture}";
             string parentComputedKey = $"{id}.{culture.Parent.TwoLetterISOLanguageName}";
 
-            string result;
-            if (translations.TryGetValue(computedKey, out result) || translations.TryGetValue(parentComputedKey, out result))
+            if (translations.TryGetValue(computedKey, out string translation) || translations.TryGetValue(parentComputedKey, out translation))
             {
                 error = false;
-                return result;
+                return translation;
             }
-            else
+
+            error = true;
+            if (createNewRecordWhenDoesNotExists)
             {
-                error = true;
-
-                if (createNewRecordWhenDoesNotExists)
+                var cultures = i18NRepository.AddTranslations(id, key, string.Empty, new Dictionary<string, string>() { [culture.ToString()] = id });
+                foreach (var item in cultures)
                 {
-                    var cultures = i18NRepository.AddText(id, key, string.Empty, new Dictionary<string, string>() { [culture.ToString()] = id }).GetAwaiter().GetResult();
-                    foreach (var item in cultures)
-                    {
-                        translations.Add($"{id}.{item}", id);
-                    }
-
-                    return id;
+                    translations.Add($"{id}.{item.LanguageId}", id);
                 }
 
-                //if (_returnKeyOnlyIfNotFound)
-                //{
-                //    return key;
-                //}
-
-                return key + "." + computedKey;
+                return id;
             }
+
+            //if (_returnKeyOnlyIfNotFound)
+            //{
+            //    return key;
+            //}
+
+            return key + "." + computedKey;
         }
 
     }

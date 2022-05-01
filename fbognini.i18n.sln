@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fbognini.i18n", "src\fbogni
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{4D3477A2-6184-4F55-AD32-DA12923F4637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "sample\SampleWebApp\SampleWebApp.csproj", "{21B82894-B9C7-4BB1-96F1-9D4BBF6BD43C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "sample\SampleWebApp\SampleWebApp.csproj", "{21B82894-B9C7-4BB1-96F1-9D4BBF6BD43C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

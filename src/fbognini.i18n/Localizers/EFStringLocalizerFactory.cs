@@ -27,12 +27,12 @@ namespace fbognini.i18n.Localizers
 
         public IStringLocalizer Create(Type resourceSource)
         {
-            return Create(resourceSource.Name);
+            return Create(GetI18NKey(resourceSource));
         }
 
         public IStringLocalizer Create(string baseName, string location)
         {
-            return Create(baseName + location);
+            return Create(CompositeKey(baseName, location));
         }
 
         private IStringLocalizer Create(string key)
@@ -56,12 +56,12 @@ namespace fbognini.i18n.Localizers
 
         public void ResetCache(Type resourceSource)
         {
-            ResetCache(resourceSource.Name);
+            ResetCache(GetI18NKey(resourceSource));
         }
 
         public void ResetCache(string baseName, string location)
         {
-            ResetCache(baseName + location);
+            ResetCache(CompositeKey(baseName, location));
         }
 
         private void ResetCache(string key)
@@ -101,6 +101,27 @@ namespace fbognini.i18n.Localizers
             }
 
             return key;
+        }
+
+        private string CompositeKey(string baseName, string location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+                return baseName;
+
+            // it's ok for views, be careful for other situations
+            var name = string.Join('.', baseName.Split('.').TakeLast(2));
+            return name;
+        }
+
+        private string GetI18NKey(Type resourceSource)
+        {
+            var attribute = resourceSource.GetCustomAttributes(typeof(I18NKeyAttribute), false).SingleOrDefault();
+            if (attribute == null)
+            {
+                return resourceSource.Name;
+            }
+
+            return ((I18NKeyAttribute)attribute).Key;
         }
     }
 }

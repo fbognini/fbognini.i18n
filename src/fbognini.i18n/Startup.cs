@@ -98,7 +98,8 @@ namespace fbognini.i18n
 
                 var options = new RequestLocalizationOptions()
                     .SetDefaultCulture(defaultCulture.Id)
-                    .AddSupportedCultures(languages.Select(x => x.Id).ToArray());
+                    .AddSupportedCultures(languages.Select(x => x.Id).ToArray())
+                    .AddSupportedUICultures(languages.Select(x => x.Id).ToArray());
 
                 app.UseRequestLocalization(options);
             }

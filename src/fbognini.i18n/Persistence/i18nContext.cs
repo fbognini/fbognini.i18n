@@ -32,9 +32,7 @@ namespace fbognini.i18n.Persistence
 
         public void DetachAllEntities()
         {
-            var changedEntriesCopy = ChangeTracker.Entries().ToList();
-            foreach (var entry in changedEntriesCopy)
-                entry.State = EntityState.Detached;
+            this.ChangeTracker.Clear();
         }
     }
 }

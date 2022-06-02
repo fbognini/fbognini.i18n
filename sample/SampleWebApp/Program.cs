@@ -5,8 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 builder.Services.AddI18N(builder.Configuration);
 
 var app = builder.Build();

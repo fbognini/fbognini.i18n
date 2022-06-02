@@ -80,6 +80,11 @@ namespace fbognini.i18n.Localizers
 
         public string NormalizeKey(string key)
         {
+            if (!string.IsNullOrWhiteSpace(localizerSettings.OverrideResourceId))
+            {
+                return localizerSettings.OverrideResourceId;
+            }
+
             foreach (var suffix in localizerSettings.RemoveSuffixs.Where(s => key.EndsWith(s)))
             {
                 key = key[..^suffix.Length];
@@ -93,11 +98,6 @@ namespace fbognini.i18n.Localizers
             if (!string.IsNullOrWhiteSpace(localizerSettings.BaseResourceId))
             {
                 key = $"{localizerSettings.BaseResourceId}.{key}";
-            }
-
-            if (!string.IsNullOrWhiteSpace(localizerSettings.OverrideResourceId))
-            {
-                key = localizerSettings.OverrideResourceId;
             }
 
             return key;

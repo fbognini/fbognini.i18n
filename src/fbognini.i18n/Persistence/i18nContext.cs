@@ -32,7 +32,20 @@ namespace fbognini.i18n.Persistence
 
         public void DetachAllEntities()
         {
+#if NET6
             this.ChangeTracker.Clear();
+#else
+            var entries = this.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted)
+                .ToList();
+
+            foreach (var entry in entries)
+                entry.State = EntityState.Detached;
+#endif
+
+
         }
     }
 }

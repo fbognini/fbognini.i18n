@@ -17,21 +17,11 @@ namespace SampleWebApp.Pages
 
         public async Task OnGet()
         {
-            //await i18NRepository.AddText("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
-            //{
-            //    ["it-IT"] = "italiano2",
-            //    ["en-GB"] = "inglese2",
-            //});
-
-
-            var tasks = new List<Task>();
-            for(int i = 0; i < 5; i++)
+            i18NRepository.AddTranslations("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
             {
-                var http = new HttpClient();
-                tasks.Add(http.GetAsync("https://localhost:5002/localization/texts"));
-            }
-
-            Task.WaitAll(tasks.ToArray());
+                ["it-IT"] = "italiano2",
+                ["en-GB"] = "inglese2",
+            });
         }
     }
 }

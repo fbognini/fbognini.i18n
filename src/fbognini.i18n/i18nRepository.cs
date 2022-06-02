@@ -132,8 +132,8 @@ namespace fbognini.i18n
 
             return text.Translations;
         }
-    
-        public void DetachAllEntities()
+
+        void II18nRepository.DetachAllEntities()
         {
             lock (context)
             {

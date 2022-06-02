@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace fbognini.i18n.Persistence.Migrations
 {
     public partial class I18N_InitialMigration : Migration
@@ -17,8 +15,8 @@ namespace fbognini.i18n.Persistence.Migrations
                 schema: "i18n",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nchar(5)", fixedLength: true, maxLength: 5, nullable: false),
-                    BaseUriResource = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
+                    Id = table.Column<string>(fixedLength: true, maxLength: 5, nullable: false),
+                    BaseUriResource = table.Column<string>(maxLength: 200, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,10 +28,10 @@ namespace fbognini.i18n.Persistence.Migrations
                 schema: "i18n",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nchar(5)", fixedLength: true, maxLength: 5, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<string>(fixedLength: true, maxLength: 5, nullable: false),
+                    Description = table.Column<string>(maxLength: 100, nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    IsDefault = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,10 +43,10 @@ namespace fbognini.i18n.Persistence.Migrations
                 schema: "i18n",
                 columns: table => new
                 {
-                    TextId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ResourceId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    TextId = table.Column<string>(maxLength: 100, nullable: false),
+                    ResourceId = table.Column<string>(maxLength: 50, nullable: false),
+                    Description = table.Column<string>(maxLength: 500, nullable: true),
+                    Created = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,11 +58,11 @@ namespace fbognini.i18n.Persistence.Migrations
                 schema: "i18n",
                 columns: table => new
                 {
-                    LanguageId = table.Column<string>(type: "nchar(5)", nullable: false),
-                    TextId = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    ResourceId = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Destination = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Updated = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified))
+                    LanguageId = table.Column<string>(nullable: false),
+                    TextId = table.Column<string>(nullable: false),
+                    ResourceId = table.Column<string>(nullable: false),
+                    Destination = table.Column<string>(nullable: true),
+                    Updated = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified))
                 },
                 constraints: table =>
                 {

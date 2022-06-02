@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fbognini.i18n.Persistence;
 
-#nullable disable
-
 namespace fbognini.i18n.Persistence.Migrations
 {
     [DbContext(typeof(I18nContext))]
-    [Migration("20220427114007_I18N_InitialMigration")]
+    [Migration("20220601163608_I18N_InitialMigration")]
     partial class I18N_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,37 +18,36 @@ namespace fbognini.i18n.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("i18n")
-                .HasAnnotation("ProductVersion", "6.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("ProductVersion", "3.1.25")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Configuration", b =>
                 {
                     b.Property<string>("Id")
-                        .HasMaxLength(5)
                         .HasColumnType("nchar(5)")
-                        .IsFixedLength();
+                        .IsFixedLength(true)
+                        .HasMaxLength(5);
 
                     b.Property<string>("BaseUriResource")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.HasKey("Id");
 
-                    b.ToTable("Configurations", "i18n");
+                    b.ToTable("Configurations");
                 });
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Language", b =>
                 {
                     b.Property<string>("Id")
-                        .HasMaxLength(5)
                         .HasColumnType("nchar(5)")
-                        .IsFixedLength();
+                        .IsFixedLength(true)
+                        .HasMaxLength(5);
 
                     b.Property<string>("Description")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -60,35 +57,35 @@ namespace fbognini.i18n.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages", "i18n");
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Text", b =>
                 {
                     b.Property<string>("TextId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("ResourceId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.HasKey("TextId", "ResourceId");
 
-                    b.ToTable("Texts", "i18n");
+                    b.ToTable("Texts");
                 });
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Translation", b =>
                 {
                     b.Property<string>("LanguageId")
-                        .HasColumnType("nchar(5)");
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("TextId")
                         .HasColumnType("nvarchar(100)");
@@ -108,7 +105,7 @@ namespace fbognini.i18n.Persistence.Migrations
 
                     b.HasIndex("TextId", "ResourceId");
 
-                    b.ToTable("Translations", "i18n");
+                    b.ToTable("Translations");
                 });
 
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Translation", b =>
@@ -124,20 +121,6 @@ namespace fbognini.i18n.Persistence.Migrations
                         .HasForeignKey("TextId", "ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Language");
-
-                    b.Navigation("Text");
-                });
-
-            modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Language", b =>
-                {
-                    b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Text", b =>
-                {
-                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

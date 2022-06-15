@@ -17,6 +17,14 @@ namespace fbognini.i18n
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="translations"></param>
+        /// <param name="all">if true, import all rows, otherwise import only updated rows</param>
+        /// <param name="deletenotmatched">if true, delete translation when not found</param>
+        void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched);
         IEnumerable<Language> GetLanguages();
     }
 }

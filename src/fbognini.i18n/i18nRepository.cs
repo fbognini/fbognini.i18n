@@ -59,6 +59,8 @@ namespace fbognini.i18n
 
         public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)
         {
+            (this as II18nRepository).DetachAllEntities();   
+
             lock (context)
             {
                 var query = context.Translations.AsQueryable();
@@ -131,6 +133,44 @@ namespace fbognini.i18n
             }
 
             return text.Translations;
+        }
+
+        public void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched)
+        {
+            var now = DateTime.Now;
+
+            lock (context)
+            {
+                var existing = GetTranslations(null, null, null, null);
+                foreach (var existingTranslation in existing)
+                {
+                    var newTranslation = translations
+                        .FirstOrDefault(x => x.LanguageId == existingTranslation.LanguageId && x.ResourceId == existingTranslation.ResourceId && x.TextId == existingTranslation.TextId);
+                    
+                    if (newTranslation == null)
+                    {
+                        if (deletenotmatched)
+                        {
+                            context.Translations.Remove(existingTranslation);
+                        }
+
+                        continue;
+                    }
+
+                    if (!all && existingTranslation.Updated > newTranslation.Updated)
+                    {
+                        continue;
+                    }
+
+                    if (!existingTranslation.Destination.Equals(newTranslation.Destination))
+                    {
+                        existingTranslation.Updated = now;
+                        existingTranslation.Destination = newTranslation.Destination;
+                    }
+                }
+
+                context.SaveChanges();
+            }
         }
 
         void II18nRepository.DetachAllEntities()

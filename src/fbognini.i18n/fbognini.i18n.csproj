@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>fbognini.i18n</PackageId>
     <TargetFrameworks>net6.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
-    <Version>6.1.1</Version>
+    <Version>6.1.2</Version>
     <Authors>Francesco Bognini</Authors>
     <Company>Francesco Bognini</Company>
     <PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>

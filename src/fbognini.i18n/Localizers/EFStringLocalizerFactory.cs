@@ -48,6 +48,29 @@ namespace fbognini.i18n.Localizers
             return localizers.GetOrAdd(key, localizer);
         }
 
+        public IStringLocalizer CreateWithRawKey(Type resourceSource)
+        {
+            return CreateWithRawKey(GetI18NKey(resourceSource));
+        }
+
+        public IStringLocalizer CreateWithRawKey(string rawKey)
+        {
+            if (localizers.ContainsKey(rawKey))
+            {
+                return localizers[rawKey];
+            }
+
+            var localizer = new EFStringLocalizer(GetResources(rawKey), rawKey, i18NRepository, localizerSettings.CreateNewRecordWhenDoesNotExists);
+            return localizers.GetOrAdd(rawKey, localizer);
+        }
+
+
+        //private IStringLocalizer Create(string key)
+        //{
+        //    key = NormalizeKey(key);
+        //    return CreateWithRawKey(key);
+        //}
+
         public void ResetCache()
         {
             localizers.Clear();
@@ -98,6 +121,11 @@ namespace fbognini.i18n.Localizers
             if (!string.IsNullOrWhiteSpace(localizerSettings.BaseResourceId))
             {
                 key = $"{localizerSettings.BaseResourceId}.{key}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(localizerSettings.OverrideResourceId))
+            {
+                key = localizerSettings.OverrideResourceId;
             }
 
             return key;

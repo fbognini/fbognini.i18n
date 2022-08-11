@@ -40,6 +40,12 @@ namespace fbognini.i18n
             return entity?.Destination;
         }
 
+        //public string Translate(string language, string textId, string resourceId)
+        //{
+        //    var entity = context.Translations.Find(language, textId, resourceId);
+        //    return entity?.Destination;
+        //}
+
         public List<string> Languages => context.Languages
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
@@ -59,7 +65,7 @@ namespace fbognini.i18n
 
         public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)
         {
-            (this as II18nRepository).DetachAllEntities();   
+            (this as II18nRepository).DetachAllEntities();
 
             lock (context)
             {
@@ -102,7 +108,7 @@ namespace fbognini.i18n
             }
 
             var defaultTranslation = translations.ContainsKey(defaultLanguage.Id) ? translations[defaultLanguage.Id] : translations.First().Value;
-
+            
             foreach (var item in languages.Where(x => !translations.ContainsKey(x.Id)))
             {
                 translations.Add(item.Id, defaultTranslation);
@@ -121,7 +127,7 @@ namespace fbognini.i18n
                     TextId = textId,
                     ResourceId = resourceId,
                     LanguageId = x.Key,
-                    Destination = x.Value,
+                    Destination = x.Value ?? string.Empty,
                     Updated = now
                 }).ToList()
             };
@@ -135,6 +141,43 @@ namespace fbognini.i18n
             return text.Translations;
         }
 
+        public void UpdateTranslation(Translation translation)
+        {
+            UpdateTranslation(translation, true);
+        }
+
+        public void UpdateTranslations(List<Translation> translations)
+        {
+            foreach (var translation in translations)
+            {
+                UpdateTranslation(translation, false);
+            }
+
+            lock (context)
+            {
+                context.SaveChanges();
+            }
+        }
+
+        private void UpdateTranslation(Translation translation, bool saveChanges = true)
+        {
+            var entity = context.Translations.Find(translation.LanguageId, translation.TextId, translation.ResourceId);
+            if (entity == null)
+                return;
+
+            entity.Destination = translation.Destination;
+            entity.Updated = DateTime.Now;
+            context.Translations.Update(entity);
+
+            if (!saveChanges)
+                return;
+
+            lock (context)
+            {
+                context.SaveChanges();
+            }
+        }
+
         public void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched)
         {
             var now = DateTime.Now;
@@ -146,7 +189,7 @@ namespace fbognini.i18n
                 {
                     var newTranslation = translations
                         .FirstOrDefault(x => x.LanguageId == existingTranslation.LanguageId && x.ResourceId == existingTranslation.ResourceId && x.TextId == existingTranslation.TextId);
-                    
+
                     if (newTranslation == null)
                     {
                         if (deletenotmatched)

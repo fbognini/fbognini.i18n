@@ -13,5 +13,11 @@ namespace fbognini.i18n.Localizers
         void ResetCache(Type resourceSource);
         void ResetCache(string baseName, string location);
         string NormalizeKey(string key);
+
+        //string GetI18NKey(Type resourceSource);
+
+
+        IStringLocalizer CreateWithRawKey(Type resourceSource);
+        IStringLocalizer CreateWithRawKey(string rawKey);
     }
 }

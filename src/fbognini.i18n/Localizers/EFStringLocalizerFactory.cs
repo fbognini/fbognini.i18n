@@ -141,7 +141,7 @@ namespace fbognini.i18n.Localizers
             return name;
         }
 
-        private string GetI18NKey(Type resourceSource)
+        public string GetI18NKey(Type resourceSource)
         {
             var attribute = resourceSource.GetCustomAttributes(typeof(I18NKeyAttribute), false).SingleOrDefault();
             if (attribute == null)

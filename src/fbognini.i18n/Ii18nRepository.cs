@@ -9,7 +9,7 @@ namespace fbognini.i18n
     public interface II18nRepository
     {
         string BaseUriResource { get; }
-        string Translate(string language, int source);
+        //string Translate(string language, int source);
         List<string> Languages { get; }
 
 

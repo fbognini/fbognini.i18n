@@ -34,15 +34,9 @@ namespace fbognini.i18n
             }
         }
 
-        public string Translate(string language, int source)
-        {
-            var entity = context.Translations.Find(language, source);
-            return entity?.Destination;
-        }
-
-        //public string Translate(string language, string textId, string resourceId)
+        //public string Translate(string language, int source)
         //{
-        //    var entity = context.Translations.Find(language, textId, resourceId);
+        //    var entity = context.Translations.Find(language, source);
         //    return entity?.Destination;
         //}
 

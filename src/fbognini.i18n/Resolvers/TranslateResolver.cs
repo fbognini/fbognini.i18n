@@ -5,37 +5,13 @@ using System.Threading;
 
 namespace fbognini.i18n.Resolvers
 {
-    public class TranslateResolver : IMemberValueResolver<object, object, int, string>, IMemberValueResolver<object, object, int?, string>, IMemberValueResolver<object, object, string, string>
+    public class TranslateResolver : IMemberValueResolver<object, object, string, string>
     {
-        private readonly II18nRepository localizer;
-        public TranslateResolver(II18nRepository localizer)
+        private readonly IExtendedStringLocalizerFactory stringLocalizerFactory;
+
+        public TranslateResolver(IExtendedStringLocalizerFactory stringLocalizerFactory)
         {
-            this.localizer = localizer;
-        }
-
-        public string Resolve(object source, object destination, int sourceMember, string destMember,
-            ResolutionContext context)
-        {
-            if (sourceMember == -1)
-                return null;
-
-            var language = Thread.CurrentThread.CurrentCulture;
-            var type = source.GetType();
-
-            var value = localizer.Translate(language.Name, sourceMember);
-            if (value != null)
-                return value;
-
-            return sourceMember.ToString();
-        }
-
-        public string Resolve(object source, object destination, int? sourceMember, string destMember,
-            ResolutionContext context)
-        {
-            if (!sourceMember.HasValue)
-                return null;
-
-            return Resolve(source, destination, sourceMember.Value, destMember, context);
+            this.stringLocalizerFactory = stringLocalizerFactory;
         }
 
         public string Resolve(object source, object destination, string sourceMember, string destMember,
@@ -44,14 +20,10 @@ namespace fbognini.i18n.Resolvers
             if (string.IsNullOrWhiteSpace(sourceMember))
                 return null;
 
-            var language = Thread.CurrentThread.CurrentCulture;
             var type = source.GetType();
 
-            var value = localizer.Translate(language.Name, sourceMember);
-            if (value != null)
-                return value;
-
-            return sourceMember.ToString();
+            var localizer = stringLocalizerFactory.CreateWithRawKey(type);
+            return localizer[sourceMember];
         }
     }
 }

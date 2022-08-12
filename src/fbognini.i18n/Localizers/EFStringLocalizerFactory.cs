@@ -123,11 +123,6 @@ namespace fbognini.i18n.Localizers
                 key = $"{localizerSettings.BaseResourceId}.{key}";
             }
 
-            if (!string.IsNullOrWhiteSpace(localizerSettings.OverrideResourceId))
-            {
-                key = localizerSettings.OverrideResourceId;
-            }
-
             return key;
         }
 

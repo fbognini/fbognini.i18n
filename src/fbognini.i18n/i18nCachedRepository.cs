@@ -37,19 +37,19 @@ namespace fbognini.i18n
             }
         }
 
-        public new string Translate(string language, int source)
-        {
-            string key = $"{language}_{source}";
-            var value = cache.Get<string>(key);
-            if (value != null)
-                return value;
+        //public new string Translate(string language, int source)
+        //{
+        //    string key = $"{language}_{source}";
+        //    var value = cache.Get<string>(key);
+        //    if (value != null)
+        //        return value;
 
-            value = base.Translate(language, source);
-            if (value != null)
-                cache.Set(key, value, cacheOptions);
+        //    value = base.Translate(language, source);
+        //    if (value != null)
+        //        cache.Set(key, value, cacheOptions);
 
-            return value;
-        }
+        //    return value;
+        //}
 
         public new List<string> Languages
         {

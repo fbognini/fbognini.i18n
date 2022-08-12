@@ -9,7 +9,7 @@ namespace fbognini.i18n
     public interface II18nRepository
     {
         string BaseUriResource { get; }
-        string Translate(string language, int source);
+        //string Translate(string language, int source);
         List<string> Languages { get; }
 
 
@@ -17,6 +17,9 @@ namespace fbognini.i18n
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
+
+        void UpdateTranslation(Translation translation);
+        void UpdateTranslations(List<Translation> translations);
 
         /// <summary>
         /// 

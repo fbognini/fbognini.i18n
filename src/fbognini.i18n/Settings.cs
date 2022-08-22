@@ -36,6 +36,7 @@ namespace fbognini.i18n
         }
         public string ConnectionString { get; set; }
         public bool UseCache { get; set; }
+        public string CookieName { get; set; }
         public ContextSettings Context { get; set; }
         public LocalizerSettings Localizer { get; set; }
     }

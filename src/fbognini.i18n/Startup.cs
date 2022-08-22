@@ -2,10 +2,12 @@
 using fbognini.i18n.Persistence;
 using fbognini.i18n.Resolvers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,18 @@ namespace fbognini.i18n
             var settings = configuration.GetSection("i18n").Get<Settings>();
             services.AddSingleton(settings.Context ?? new ContextSettings());
             services.AddSingleton(settings.Localizer ?? new LocalizerSettings());
+
+            if (!string.IsNullOrWhiteSpace(settings.CookieName))
+            {
+                var provider = new CookieRequestCultureProvider()
+                {
+                    CookieName = settings.CookieName
+                };
+                services.Configure<RequestLocalizationOptions>(options =>
+                {
+                    options.RequestCultureProviders.Insert(0, provider);
+                });
+            }
 
             services.AddLocalization();
 
@@ -96,7 +110,7 @@ namespace fbognini.i18n
                     defaultCulture = languages.First();
                 }
 
-                var options = new RequestLocalizationOptions()
+                var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value
                     .SetDefaultCulture(defaultCulture.Id)
                     .AddSupportedCultures(languages.Select(x => x.Id).ToArray())
                     .AddSupportedUICultures(languages.Select(x => x.Id).ToArray());

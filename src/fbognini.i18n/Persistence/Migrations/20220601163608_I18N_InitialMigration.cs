@@ -58,7 +58,7 @@ namespace fbognini.i18n.Persistence.Migrations
                 schema: "i18n",
                 columns: table => new
                 {
-                    LanguageId = table.Column<string>(nullable: false),
+                    LanguageId = table.Column<string>(fixedLength: true, maxLength: 5, nullable: false),
                     TextId = table.Column<string>(nullable: false),
                     ResourceId = table.Column<string>(nullable: false),
                     Destination = table.Column<string>(nullable: true),

@@ -85,7 +85,9 @@ namespace fbognini.i18n.Persistence.Migrations
             modelBuilder.Entity("fbognini.i18n.Persistence.Entities.Translation", b =>
                 {
                     b.Property<string>("LanguageId")
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nchar(5)")
+                        .IsFixedLength(true)
+                        .HasMaxLength(5);
 
                     b.Property<string>("TextId")
                         .HasColumnType("nvarchar(100)");

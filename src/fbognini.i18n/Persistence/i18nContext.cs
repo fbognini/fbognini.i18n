@@ -1,6 +1,7 @@
 ﻿using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Reflection;
 
@@ -8,13 +9,13 @@ namespace fbognini.i18n.Persistence
 {
     internal class I18nContext : DbContext
     {
-        private readonly ContextSettings settings;
+        private readonly string schema;
 
         //protected readonly IConfiguration Configuration;
 
-        public I18nContext(DbContextOptions<I18nContext> options, ContextSettings settings) : base(options)
+        public I18nContext(DbContextOptions<I18nContext> options, IOptions<I18nSettings> i18noptions) : base(options)
         {
-            this.settings = settings;
+            schema = i18noptions.Value.Schema;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -22,7 +23,7 @@ namespace fbognini.i18n.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasDefaultSchema(settings.Schema);
+            modelBuilder.HasDefaultSchema(schema);
         }
 
         internal DbSet<Language> Languages { get; set; }
@@ -32,7 +33,7 @@ namespace fbognini.i18n.Persistence
 
         public void DetachAllEntities()
         {
-#if NET6
+#if NET6_0_OR_GREATER
             this.ChangeTracker.Clear();
 #else
             var entries = this.ChangeTracker.Entries()

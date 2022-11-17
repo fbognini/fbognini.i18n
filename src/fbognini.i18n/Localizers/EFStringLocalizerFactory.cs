@@ -1,6 +1,7 @@
 ﻿using fbognini.i18n.Persistence;
 using fbognini.i18n.Persistence.Entities;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,12 +18,12 @@ namespace fbognini.i18n.Localizers
         private static readonly ConcurrentDictionary<string, IStringLocalizer> localizers = new ConcurrentDictionary<string, IStringLocalizer>();
 
         private readonly II18nRepository i18NRepository;
-        private readonly LocalizerSettings localizerSettings;
+        private readonly I18nSettings.LocalizerSettings localizerSettings;
 
-        public EFStringLocalizerFactory(II18nRepository i18NRepository, LocalizerSettings localizerSettings)
+        public EFStringLocalizerFactory(II18nRepository i18NRepository, IOptions<I18nSettings> i18noptions)
         {
             this.i18NRepository = i18NRepository;
-            this.localizerSettings = localizerSettings;
+            this.localizerSettings = i18noptions.Value.Localizer;
         }
 
         public IStringLocalizer Create(Type resourceSource)
@@ -63,13 +64,6 @@ namespace fbognini.i18n.Localizers
             var localizer = new EFStringLocalizer(GetResources(rawKey), rawKey, i18NRepository, localizerSettings.CreateNewRecordWhenDoesNotExists);
             return localizers.GetOrAdd(rawKey, localizer);
         }
-
-
-        //private IStringLocalizer Create(string key)
-        //{
-        //    key = NormalizeKey(key);
-        //    return CreateWithRawKey(key);
-        //}
 
         public void ResetCache()
         {

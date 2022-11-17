@@ -19,52 +19,34 @@ namespace fbognini.i18n
 {
     public static class Startup
     {
-        public static IServiceCollection AddI18N(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddI18N(this IServiceCollection services, Action<I18nSettings> options)
         {
-            var settings = configuration.GetSection("i18n").Get<Settings>();
-            services.AddSingleton(settings.Context ?? new ContextSettings());
-            services.AddSingleton(settings.Localizer ?? new LocalizerSettings());
+            var settings = new I18nSettings();
+            options.Invoke(settings);
 
-            if (!string.IsNullOrWhiteSpace(settings.CookieName))
+            return services.AddI18N(settings);
+        }
+
+        public static IServiceCollection AddI18N(this IServiceCollection services, IConfiguration configuration, Action<I18nSettings> options = null)
+        {
+            return services.AddI18N(configuration.GetSection(nameof(I18nSettings)), options);
+        }
+
+        public static IServiceCollection AddI18N(this IServiceCollection services, IConfigurationSection section, Action<I18nSettings> options = null)
+        {
+            var settings = section.Get<I18nSettings>();
+
+            if (options != null)
             {
-                var provider = new CookieRequestCultureProvider()
-                {
-                    CookieName = settings.CookieName
-                };
-                services.Configure<RequestLocalizationOptions>(options =>
-                {
-                    options.RequestCultureProviders.Insert(0, provider);
-                });
+                options(settings);
+                services.Configure(options);
             }
-
-            services.AddLocalization();
-
-            if (settings.UseCache)
+            else
             {
-                services.AddMemoryCache();
-                services.AddSingleton<II18nRepository, I18nCachedRepository>();
-            }
-            else 
-            { 
-                services.AddSingleton<II18nRepository, I18nRepository>();
+                services.Configure<I18nSettings>(section);
             }
 
-            services.AddTransient<TranslateResolver>();
-
-            services.AddTransient<LocalizedPathResolver>();
-            services.AddTransient<NotLocalizedPathResolver>();
-
-            services.AddTransient<ImageAllLocalizedPathResolver>();
-            services.AddTransient<ImageNotLocalizedPathResolver>();
-            services.AddDbContext<I18nContext>(options => 
-                options.UseSqlServer(settings.ConnectionString),
-                    ServiceLifetime.Singleton,
-                    ServiceLifetime.Singleton);
-
-            services.AddSingleton<IStringLocalizerFactory, EFStringLocalizerFactory>();
-            services.AddSingleton<IExtendedStringLocalizerFactory, EFStringLocalizerFactory>();
-
-            return services;
+            return services.AddI18N(settings);
         }
 
         public static async Task InitializeI18N(this IServiceProvider services, CancellationToken cancellationToken = default)
@@ -121,5 +103,48 @@ namespace fbognini.i18n
             return app;
         }
 
+        private static IServiceCollection AddI18N(this IServiceCollection services, I18nSettings settings)
+        {
+            if (!string.IsNullOrWhiteSpace(settings.CookieName))
+            {
+                var provider = new CookieRequestCultureProvider()
+                {
+                    CookieName = settings.CookieName
+                };
+                services.Configure<RequestLocalizationOptions>(options =>
+                {
+                    options.RequestCultureProviders.Insert(0, provider);
+                });
+            }
+
+            services.AddLocalization();
+
+            if (settings.UseCache)
+            {
+                services.AddMemoryCache();
+                services.AddSingleton<II18nRepository, I18nCachedRepository>();
+            }
+            else
+            {
+                services.AddSingleton<II18nRepository, I18nRepository>();
+            }
+
+            services.AddTransient<TranslateResolver>();
+
+            services.AddTransient<LocalizedPathResolver>();
+            services.AddTransient<NotLocalizedPathResolver>();
+
+            services.AddTransient<ImageAllLocalizedPathResolver>();
+            services.AddTransient<ImageNotLocalizedPathResolver>();
+            services.AddDbContext<I18nContext>(options =>
+                options.UseSqlServer(settings.ConnectionString),
+                    ServiceLifetime.Singleton,
+                    ServiceLifetime.Singleton);
+
+            services.AddSingleton<IStringLocalizerFactory, EFStringLocalizerFactory>();
+            services.AddSingleton<IExtendedStringLocalizerFactory, EFStringLocalizerFactory>();
+
+            return services;
+        }
     }
 }

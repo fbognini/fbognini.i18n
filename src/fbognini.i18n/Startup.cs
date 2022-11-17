@@ -24,6 +24,8 @@ namespace fbognini.i18n
             var settings = new I18nSettings();
             options.Invoke(settings);
 
+            services.Configure(options);
+
             return services.AddI18N(settings);
         }
 

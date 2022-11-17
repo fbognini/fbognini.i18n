@@ -1,4 +1,5 @@
 ﻿using fbognini.i18n.Persistence.Entities;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -13,13 +14,16 @@ namespace fbognini.i18n
         List<string> Languages { get; }
 
 
-        internal void DetachAllEntities();
+        IEnumerable<Language> GetLanguages();
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
 
         void UpdateTranslation(Translation translation);
         void UpdateTranslations(List<Translation> translations);
+
+        void ImportExcel(string path, bool all, bool deletenotmatched);
+        byte[] ExportExcel();
 
         /// <summary>
         /// 
@@ -28,6 +32,7 @@ namespace fbognini.i18n
         /// <param name="all">if true, import all rows, otherwise import only updated rows</param>
         /// <param name="deletenotmatched">if true, delete translation when not found</param>
         void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched);
-        IEnumerable<Language> GetLanguages();
+
+        internal void DetachAllEntities();
     }
 }

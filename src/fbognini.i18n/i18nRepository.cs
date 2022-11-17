@@ -1,9 +1,11 @@
 ﻿using fbognini.i18n.Persistence;
 using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Snickler.EFCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -153,23 +155,38 @@ namespace fbognini.i18n
             }
         }
 
-        private void UpdateTranslation(Translation translation, bool saveChanges = true)
+        public void ImportExcel(string path, bool all, bool deletenotmatched)
         {
-            var entity = context.Translations.Find(translation.LanguageId, translation.TextId, translation.ResourceId);
-            if (entity == null)
-                return;
+            var translations = GetExcelRecords(path);
 
-            entity.Destination = translation.Destination;
-            entity.Updated = DateTime.Now;
-            context.Translations.Update(entity);
+            ImportTranslations(translations, all, deletenotmatched);
+        }
 
-            if (!saveChanges)
-                return;
+        public byte[] ExportExcel()
+        {
+            var translations = GetTranslations(null, null, null, null);
 
-            lock (context)
-            {
-                context.SaveChanges();
-            }
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Texts");
+
+            var header = new List<string[]>
+                    {
+                        new string[] {
+                            "LanguageId",
+                            "TextId",
+                            "ResourceId",
+                            "Destination",
+                            "Updated", },
+                    };
+
+            var headerRange = worksheet.Cells["A1:E1"];
+            headerRange.Style.Font.Bold = true;
+            headerRange.LoadFromArrays(header);
+
+            worksheet.Cells[2, 1, translations.Count() + 1, 8]
+                .LoadFromArrays(translations.Select(x => new string[] { x.LanguageId, x.TextId, x.ResourceId, x.Destination, x.Updated.ToString() }).ToArray());
+
+            return package.GetAsByteArray();
         }
 
         public void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched)
@@ -216,6 +233,54 @@ namespace fbognini.i18n
             {
                 context.DetachAllEntities();
             }
+        }
+
+        private void UpdateTranslation(Translation translation, bool saveChanges = true)
+        {
+            var entity = context.Translations.Find(translation.LanguageId, translation.TextId, translation.ResourceId);
+            if (entity == null)
+                return;
+
+            entity.Destination = translation.Destination;
+            entity.Updated = DateTime.Now;
+            context.Translations.Update(entity);
+
+            if (!saveChanges)
+                return;
+
+            lock (context)
+            {
+                context.SaveChanges();
+            }
+        }
+
+        private static List<Translation> GetExcelRecords(string path)
+        {
+            using var package = new ExcelPackage(new FileInfo(path));
+            var worksheet = package.Workbook.Worksheets[0];
+
+            int rowCount = worksheet.Dimension.End.Row;
+
+            var records = new List<Translation>();
+            for (int i = 2; i <= rowCount; i++)
+            {
+                var languageId = worksheet.Cells[i, 1].Value?.ToString().Trim();
+                var textId = worksheet.Cells[i, 2].Value?.ToString().Trim();
+                var resourceId = worksheet.Cells[i, 3].Value?.ToString().Trim();
+                var destination = worksheet.Cells[i, 4].Value?.ToString().Trim();
+                var updated = worksheet.Cells[i, 5].Value?.ToString().Trim();
+
+                records.Add(new Translation
+                {
+                    LanguageId = languageId,
+                    TextId = textId,
+                    ResourceId = resourceId,
+                    Destination = destination,
+                    Updated = DateTime.Parse(updated)
+                });
+            }
+
+            return records;
         }
     }
 }

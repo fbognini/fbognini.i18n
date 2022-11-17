@@ -11,8 +11,6 @@ namespace fbognini.i18n.Persistence
     {
         private readonly string schema;
 
-        //protected readonly IConfiguration Configuration;
-
         public I18nContext(DbContextOptions<I18nContext> options, IOptions<I18nSettings> i18noptions) : base(options)
         {
             schema = i18noptions.Value.Schema;

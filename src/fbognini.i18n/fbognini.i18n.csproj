@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>fbognini.i18n</PackageId>
     <TargetFrameworks>net7.0;net6.0;netstandard2.1</TargetFrameworks>
-    <Version>7.0.1</Version>
+    <Version>7.0.2</Version>
     <Authors>Francesco Bognini</Authors>
     <Company>Francesco Bognini</Company>
     <PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>
@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />

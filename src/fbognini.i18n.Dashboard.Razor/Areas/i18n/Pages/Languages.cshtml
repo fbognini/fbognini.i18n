@@ -1,0 +1,132 @@
+﻿@page
+@model fbognini.i18n.Dashboard.i18n.Pages.LanguageModel
+@{
+    Layout = "_i18nLayout.cshtml";
+}
+
+@section Styles{
+
+    <!--datatable css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+}
+
+
+<h1>Page</h1>
+
+<div class="row">
+    <table id="languages-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Descrizione</th>
+                <th>Attivo</th>
+                <th>Default</th>
+
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="edit-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="edit-modalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="id" class="col-form-label">Id</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" id="id" class="form-control" aria-describedby="id">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="id" class="col-form-label">Id</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" id="id" class="form-control" aria-describedby="id">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-primary">Salva</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!--datatable js-->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.11.3/dataRender/datetime.js"></script>
+
+    <script src="/_content/fbognini.i18n.Dashboard/js/fbognini-pagination-1.0.1.js"></script>
+    <script src="/_content/fbognini.i18n.Dashboard/lib/alt-editor/dataTAbles.altEditor.free.js"></script>
+
+    <script>
+        let table;
+        
+        $(document).ready(function () {
+            initializeDatatable();
+        });
+
+        function initializeDatatable() {
+            table = $('#languages-table').DataTable({
+                dom: 'Bfrtip',
+                stateSave: false,
+                searching: false,
+                ajax: function (data, callback, settings) {
+                    let url = '@Url.Action("Search", "ApiLanguage")';
+                    var func = fullSearchDatatables(url);
+                    func(data, callback, settings);
+                },
+                order: [[0, "desc"]],
+                // Columns Setups
+                columns: [
+                    { data: "id", required:"true" },
+                    { data: "description" },
+                    { data: "isActive", type: "checkbox" },
+                    { data: "isDefault", type: "checkbox" },
+                ],
+                select: "single",
+                altEditor: true,
+                buttons: [
+                    {
+                        text: 'Aggiungi',
+                        name: 'add'        // do not change name
+                    },
+                ],
+                onAddRow: function(datatable, rowdata, success, error) {                    
+                    $.ajax({
+                        url: "@Url.Action("Create", "ApiLanguage")",
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(rowdata),
+                        success: success,
+                        error: error
+                    });
+                },
+
+            });
+        }
+
+        function createModal(col) {
+
+        }
+    </script>
+}

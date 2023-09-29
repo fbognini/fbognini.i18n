@@ -1,4 +1,5 @@
 using fbognini.i18n;
+using fbognini.i18n.Dashboard.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddI18N(builder.Configuration);
+builder.Services.AddI18nDashboardServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,6 +29,8 @@ app.UseRouting();
 await app.InitializeI18N();
 
 app.UseRequestLocalizationI18N();
+
+app.UseI18nDashboard();
 
 app.UseAuthorization();
 

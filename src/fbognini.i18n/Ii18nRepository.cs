@@ -15,6 +15,7 @@ namespace fbognini.i18n
 
 
         IEnumerable<Language> GetLanguages();
+        void AddLanguage(Language language);
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);

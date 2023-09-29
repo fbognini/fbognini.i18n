@@ -7,9 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace fbognini.i18n
 {
@@ -36,12 +33,6 @@ namespace fbognini.i18n
             }
         }
 
-        //public string Translate(string language, int source)
-        //{
-        //    var entity = context.Translations.Find(language, source);
-        //    return entity?.Destination;
-        //}
-
         public List<string> Languages => context.Languages
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
@@ -57,6 +48,16 @@ namespace fbognini.i18n
             }
 
             return languages;
+        }
+
+        public void AddLanguage(Language language)
+        {
+            lock (context)
+            {
+                context.Languages.Add(language);
+
+                context.SaveChanges();
+            }
         }
 
         public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)

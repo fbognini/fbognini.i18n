@@ -1,4 +1,6 @@
-﻿using fbognini.i18n.Persistence.Entities;
+﻿using fbognini.Core.Data.Pagination;
+using fbognini.Core.Data;
+using fbognini.i18n.Persistence.Entities;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,10 @@ namespace fbognini.i18n
         void AddLanguage(Language language);
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
+        void DeleteTranslations(string textId, string resourceId);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
+        PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria);
+        PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria);
 
         void UpdateTranslation(Translation translation);
         void UpdateTranslations(List<Translation> translations);

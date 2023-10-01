@@ -1,4 +1,4 @@
-﻿using fbognini.i18n.Dashboard.Handlers.Languages;
+﻿using fbognini.i18n.Dashboard.Handlers.Translations;
 using fbognini.WebFramework.FullSearch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
 {
     [Area("i18n")]
-    public class ApiLanguageController : BaseApiController
+    public class ApiTranslationController : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult> Search([FromQuery] GetPaginatedLanguagesQuery query, [FromQuery] FullSearchQueryParameters search)
+        public async Task<ActionResult> Search([FromQuery] GetPaginatedTranslationsQuery query, [FromQuery] FullSearchQueryParameters search)
         {
             query.LoadFullSearchParameters(search);
 
@@ -22,10 +22,10 @@ namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateLanguageCommand command)
-        {
-            return Ok(await Mediator.Send(command));
-        }
+        //[HttpPost]
+        //public async Task<ActionResult> Create([FromBody] CreateTranslationCommand command)
+        //{
+        //    return Ok(await Mediator.Send(command));
+        //}
     }
 }

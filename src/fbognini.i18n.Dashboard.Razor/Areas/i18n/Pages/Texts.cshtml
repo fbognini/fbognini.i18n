@@ -1,5 +1,5 @@
 ﻿@page
-@model fbognini.i18n.Dashboard.i18n.Pages.LanguageModel
+@model fbognini.i18n.Dashboard.i18n.Pages.TextModel
 @{
     Layout = "_i18nLayout.cshtml";
 }
@@ -15,17 +15,16 @@
 }
 
 
-<h1>Page</h1>
+<h1>Testi</h1>
 
 <div class="row">
-    <table id="languages-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+    <table id="texts-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Testo</th>
+                <th>Risorsa</th>
                 <th>Descrizione</th>
-                <th>Attivo</th>
-                <th>Default</th>
-
+                <th>Data creazione</th>
             </tr>
         </thead>
     </table>
@@ -51,68 +50,54 @@
         
         $(document).ready(function () {
             initializeDatatable();
+
+            $("#submit-form-btn").on("click", function () {
+                table.ajax.reload();
+            });
         });
 
         function initializeDatatable() {
             editor = new $.fn.dataTable.Editor({
                 idSrc: "id",
                 ajax: {
-                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiLanguage")'),
+                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiText")'),
+                    remove: function (_, _, d, success, error) {
+
+                        var queryParams = Object.values(d.data).map(item => "ids=" + item["id"]).join("&");
+                        restRemoveEditorDatatablesInner(url + "?" + queryParams, d, success, error, options);
+                    },
                 },
-                table: $("#languages-table"),
+                table: $("#texts-table"),
                 fields: [
                     {
-                        label: "Id",
-                        name: "id",
+                        label: "Testo*",
+                        name: "textId",
                     },
                     {
-                        label: "Description",
+                        label: "Risorsa*",
+                        name: "resourceId",
+                    },
+                    {
+                        label: "Descrizione",
                         name: "description",
-                    },
-                    {
-                        label: "Attivo",
-                        name: "isActive",
-                        type: "checkbox",
-                        separator: "",
-                        options: [
-                            { label: "", value: true }
-                        ],
-                        unselectedValue: false
-                    },
-                    {
-                        label: "Default",
-                        name: "isDefault",
-                        type: "checkbox",
-                        separator: "",
-                        options: [
-                            { label: "", value: true }
-                        ],
-                        unselectedValue: false
                     },
                 ]
             })
-            .on("initEdit", function () {
-                editor.disable('id');
-            })
             .on("preSubmit", function (e, data, action) {
                 if (action !== 'remove') {
-                    let id = this.field('id');
-                    if (!id.isMultiValue()) {
-                        if (!id.val()) {
-                            id.error('Id obbligatorio');
-                        }
-                    }
- 
-                    let description = this.field('description');
-                    if (!description.isMultiValue()) {
-                        if (!id.val()) {
-                            description.error('Descrizione obbligatoria');
+                    let textId = this.field('textId');
+                    if (!textId.isMultiValue()) {
+                        if (!textId.val()) {
+                            textId.error('Testo obbligatorio');
                         }
                     }
 
-                    data.data[0].isActive = data.data[0].isActive == "true" ? true : false;
-                    data.data[0].isDefault = data.data[0].isDefault == "true" ? true : false;
-                    console.log(data.data[0]);
+                    let resourceId = this.field('resourceId');
+                    if (!resourceId.isMultiValue()) {
+                        if (!resourceId.val()) {
+                            resourceId.error('Risorsa obbligatorio');
+                        }
+                    }
 
                     if (this.inError()) {
                         return false;
@@ -120,22 +105,22 @@
                 }
             });
             
-            table = $('#languages-table').DataTable({
+            table = $('#texts-table').DataTable({
                 dom: 'Bfrtip',
                 stateSave: false,
                 searching: false,
                 ajax: function (data, callback, settings) {
-                    let url = '@Url.Action("Search", "ApiLanguage")';
+                    let url = '@Url.Action("Search", "ApiText")?languageId='+ $("#language-filter").val() + "&textId=" + $("#text-filter").val();
                     var func = fullSearchDatatables(url);
                     func(data, callback, settings);
                 },
                 order: [[0, "desc"]],
                 // Columns Setups
                 columns: [
-                    { data: "id", required:"true" },
+                    { data: "textId" },
+                    { data: "resourceId" },
                     { data: "description" },
-                    { data: "isActive", type: "checkbox" },
-                    { data: "isDefault", type: "checkbox" },
+                    { data: "created" },
                 ],
                 buttons: [
                     {

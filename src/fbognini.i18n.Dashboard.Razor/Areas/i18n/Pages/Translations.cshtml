@@ -1,5 +1,5 @@
 ﻿@page
-@model fbognini.i18n.Dashboard.i18n.Pages.LanguageModel
+@model fbognini.i18n.Dashboard.i18n.Pages.TranslationModel
 @{
     Layout = "_i18nLayout.cshtml";
 }
@@ -15,17 +15,35 @@
 }
 
 
-<h1>Page</h1>
+<h1>Traduzioni</h1>
 
+<div class="row mb-3">
+    <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="language-filter" class="form-label">Lingua</label>
+          <input type="text" class="form-control" id="language-filter">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="text-filter" class="form-label">Testo</label>
+          <input type="text" class="form-control" id="text-filter">
+        </div>
+    </div>
+    <div class="col-12">
+        <button id="submit-form-btn" type="button" class="btn btn-primary">Cerca</button>
+    </div>
+</div>
+<hr />
 <div class="row">
-    <table id="languages-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+    <table id="translations-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Descrizione</th>
-                <th>Attivo</th>
-                <th>Default</th>
-
+                <th>Lingua</th>
+                <th>Testo</th>
+                <th>Risorsa</th>
+                <th>Destinazione</th>
+                <th>Aggiornamento</th>
             </tr>
         </thead>
     </table>
@@ -51,68 +69,72 @@
         
         $(document).ready(function () {
             initializeDatatable();
+
+            $("#submit-form-btn").on("click", function () {
+                table.ajax.reload();
+            });
         });
 
         function initializeDatatable() {
             editor = new $.fn.dataTable.Editor({
                 idSrc: "id",
                 ajax: {
-                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiLanguage")'),
+                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiTranslation")'),
                 },
-                table: $("#languages-table"),
+                table: $("#translations-table"),
                 fields: [
                     {
-                        label: "Id",
-                        name: "id",
+                        label: "Lingua",
+                        name: "languageId",
                     },
                     {
-                        label: "Description",
-                        name: "description",
+                        label: "Testo",
+                        name: "textId",
                     },
                     {
-                        label: "Attivo",
-                        name: "isActive",
-                        type: "checkbox",
-                        separator: "",
-                        options: [
-                            { label: "", value: true }
-                        ],
-                        unselectedValue: false
+                        label: "Risorsa",
+                        name: "resourceId",
                     },
                     {
-                        label: "Default",
-                        name: "isDefault",
-                        type: "checkbox",
-                        separator: "",
-                        options: [
-                            { label: "", value: true }
-                        ],
-                        unselectedValue: false
+                        label: "Destinazione",
+                        name: "destination",
                     },
                 ]
             })
             .on("initEdit", function () {
-                editor.disable('id');
+                editor.disable('languageId');
+                editor.disable('textId');
+                editor.disable('resourceId');
             })
             .on("preSubmit", function (e, data, action) {
                 if (action !== 'remove') {
-                    let id = this.field('id');
-                    if (!id.isMultiValue()) {
-                        if (!id.val()) {
-                            id.error('Id obbligatorio');
-                        }
-                    }
- 
-                    let description = this.field('description');
-                    if (!description.isMultiValue()) {
-                        if (!id.val()) {
-                            description.error('Descrizione obbligatoria');
+                    let languageId = this.field('languageId');
+                    if (!languageId.isMultiValue()) {
+                        if (!languageId.val()) {
+                            languageId.error('Lingua obbligatorio');
                         }
                     }
 
-                    data.data[0].isActive = data.data[0].isActive == "true" ? true : false;
-                    data.data[0].isDefault = data.data[0].isDefault == "true" ? true : false;
-                    console.log(data.data[0]);
+                    let textId = this.field('textId');
+                    if (!textId.isMultiValue()) {
+                        if (!textId.val()) {
+                            textId.error('Testo obbligatorio');
+                        }
+                    }
+
+                    let resourceId = this.field('resourceId');
+                    if (!resourceId.isMultiValue()) {
+                        if (!resourceId.val()) {
+                            resourceId.error('Risorsa obbligatorio');
+                        }
+                    }
+                    
+                    let destination = this.field('destination');
+                    if (!destination.isMultiValue()) {
+                        if (!destination.val()) {
+                            destination.error('Destinazione obbligatorio');
+                        }
+                    }
 
                     if (this.inError()) {
                         return false;
@@ -120,22 +142,23 @@
                 }
             });
             
-            table = $('#languages-table').DataTable({
+            table = $('#translations-table').DataTable({
                 dom: 'Bfrtip',
                 stateSave: false,
                 searching: false,
                 ajax: function (data, callback, settings) {
-                    let url = '@Url.Action("Search", "ApiLanguage")';
+                    let url = '@Url.Action("Search", "ApiTranslation")?languageId='+ $("#language-filter").val() + "&textId=" + $("#text-filter").val();
                     var func = fullSearchDatatables(url);
                     func(data, callback, settings);
                 },
                 order: [[0, "desc"]],
                 // Columns Setups
                 columns: [
-                    { data: "id", required:"true" },
-                    { data: "description" },
-                    { data: "isActive", type: "checkbox" },
-                    { data: "isDefault", type: "checkbox" },
+                    { data: "languageId" },
+                    { data: "textId" },
+                    { data: "resourceId" },
+                    { data: "destination" },
+                    { data: "updated" },
                 ],
                 buttons: [
                     {

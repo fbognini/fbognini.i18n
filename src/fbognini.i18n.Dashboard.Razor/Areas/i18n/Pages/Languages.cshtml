@@ -8,14 +8,14 @@
 
     <!--datatable css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    @*<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">*@
     <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     
     <link rel="stylesheet" href="/_content/fbognini.i18n.Dashboard/lib/Editor-2.0.5/css/editor.bootstrap5.css">
 }
 
 
-<h1>Page</h1>
+<h1>Lingue</h1>
 
 <div class="row">
     <table id="languages-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
@@ -25,7 +25,6 @@
                 <th>Descrizione</th>
                 <th>Attivo</th>
                 <th>Default</th>
-
             </tr>
         </thead>
     </table>
@@ -58,6 +57,7 @@
                 idSrc: "id",
                 ajax: {
                     create: restCreateEditorDatatables('@Url.Action("Create", "ApiLanguage")'),
+                    edit: restEditEditorDatatables('@Url.Action("Update", "ApiLanguage")'),
                 },
                 table: $("#languages-table"),
                 fields: [
@@ -109,10 +109,18 @@
                             description.error('Descrizione obbligatoria');
                         }
                     }
+                    console.log("Data", data);
 
-                    data.data[0].isActive = data.data[0].isActive == "true" ? true : false;
-                    data.data[0].isDefault = data.data[0].isDefault == "true" ? true : false;
-                    console.log(data.data[0]);
+                    let _data;
+                    if (action === 'edit') {
+                        _data = Object.values(data.data)[0];
+                    } else {
+                        _data = data.data[0];
+                    }
+
+                    _data.isActive = _data.isActive == "true" ? true : false;
+                    _data.isDefault = _data.isDefault == "true" ? true : false;
+                    console.log(_data);
 
                     if (this.inError()) {
                         return false;
@@ -137,17 +145,22 @@
                     { data: "isActive", type: "checkbox" },
                     { data: "isDefault", type: "checkbox" },
                 ],
+                select: {
+                    style: 'single'
+                },
                 buttons: [
                     {
                         text: "Nuovo",
                         extend: "create",
-                        editor: editor
+                        editor: editor,
+                        className: "btn btn-primary"
                     },
-                    //{
-                    //    text: "Modifica",
-                    //    extend: "editSingle",
-                    //    editor: editor
-                    //}
+                    {
+                        text: "Modifica",
+                        extend: "editSingle",
+                        editor: editor,
+                        className: "btn btn-primary"
+                    }
                 ],
 
             });

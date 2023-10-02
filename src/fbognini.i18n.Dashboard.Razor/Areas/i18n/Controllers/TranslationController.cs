@@ -22,10 +22,10 @@ namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
             return Ok(result);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> Create([FromBody] CreateTranslationCommand command)
-        //{
-        //    return Ok(await Mediator.Send(command));
-        //}
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] UpdateTranslationCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
     }
 }

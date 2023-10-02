@@ -7,6 +7,9 @@ namespace fbognini.i18n.Dashboard.Handlers.Texts
 {
     public class GetPaginatedTextsQuery : IRequest<PaginationResponse<TextDto>>, IFullSearchQuery
     {
+        public string? TextId { get; set; }
+        public string? ResourceId { get; set; }
+
         public FullSearch FullSearch { get; set; } = new();
 
         internal class GetPaginatedTextsQueryHandler : IRequestHandler<GetPaginatedTextsQuery, PaginationResponse<TextDto>>
@@ -26,6 +29,8 @@ namespace fbognini.i18n.Dashboard.Handlers.Texts
             {
                 var criteria = new TextSelectCriteria()
                 {
+                    TextId = query.TextId,
+                    ResourceId = query.ResourceId,
                 };
                 var response = i18NRepository.GetPaginatedTexts(criteria);
 

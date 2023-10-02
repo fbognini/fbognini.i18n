@@ -9,6 +9,8 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
     {
         public string? LanguageId { get; set; }
         public string? TextId { get; set; }
+        public string? ResourceId { get; set; }
+        public bool OnlyNotTranslated { get; set; } = false;
 
         public FullSearch FullSearch { get; set; } = new();
 
@@ -31,7 +33,10 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
                 {
                     LanguageId = query.LanguageId,
                     TextId = query.TextId,
+                    ResourceId = query.ResourceId,
+                    NotTranslated = query.OnlyNotTranslated ? true : null,
                 };
+                criteria.LoadFullSearchQuery(query);
                 var response = i18NRepository.GetPaginatedTranslations(criteria);
 
                 return new PaginationResponse<TranslationDto>()

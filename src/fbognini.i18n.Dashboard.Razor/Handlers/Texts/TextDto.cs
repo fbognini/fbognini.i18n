@@ -9,6 +9,7 @@ namespace fbognini.i18n.Dashboard.Handlers.Texts
 {
     public class TextDto : Mappable<TextDto, Text>
     {
+        public string Id => $"{TextId}|{ResourceId}";
         public string TextId { get; set; }
         public string ResourceId { get; set; }
         public string Description { get; set; }

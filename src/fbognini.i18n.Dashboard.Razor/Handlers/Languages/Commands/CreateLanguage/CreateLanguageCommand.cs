@@ -33,7 +33,7 @@ namespace fbognini.i18n.Dashboard.Handlers.Languages
                     IsActive = command.IsActive,
                     IsDefault = command.IsDefault
                 };
-                i18NRepository.AddLanguage(language);
+                i18NRepository.AddLanguageWithTranslations(language);
 
                 return mapper.Map<LanguageDto>(language);
             }

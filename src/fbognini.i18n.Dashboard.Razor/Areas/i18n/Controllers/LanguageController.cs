@@ -1,12 +1,6 @@
 ﻿using fbognini.i18n.Dashboard.Handlers.Languages;
 using fbognini.WebFramework.FullSearch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Cache;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
 {
@@ -24,6 +18,12 @@ namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateLanguageCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
+        
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] UpdateLanguageCommand command)
         {
             return Ok(await Mediator.Send(command));
         }

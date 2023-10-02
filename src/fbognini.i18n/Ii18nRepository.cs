@@ -17,7 +17,10 @@ namespace fbognini.i18n
 
 
         IEnumerable<Language> GetLanguages();
+        PaginationResponse<Language> GetPaginatedLanguages(SelectCriteria<Language> criteria);
         void AddLanguage(Language language);
+        void AddLanguageWithTranslations(Language language);
+        Language UpdateLanguage(string id, string description, bool isActive, bool isDefault);
 
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         void DeleteTranslations(string textId, string resourceId);

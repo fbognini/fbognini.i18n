@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using fbognini.Core.Data.Pagination;
 using fbognini.WebFramework.FullSearch;
 using MediatR;
@@ -29,12 +30,15 @@ namespace fbognini.i18n.Dashboard.Handlers.Languages
 
             public async Task<PaginationResponse<LanguageDto>> Handle(GetPaginatedLanguagesQuery query, CancellationToken cancellationToken)
             {
-                var languages = i18NRepository.GetLanguages();
+                var criteria = new LanguageSelectCriteria();
+                criteria.LoadFullSearchQuery(query);
+
+                var response = i18NRepository.GetPaginatedLanguages(criteria);
 
                 return new PaginationResponse<LanguageDto>()
                 {
-                    Items = mapper.Map<List<LanguageDto>>(languages),
-                    Pagination = null,
+                    Items = mapper.Map<List<LanguageDto>>(response.Items),
+                    Pagination = response.Pagination,
                 };
             }
         }

@@ -8,6 +8,8 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
     {
         public string? LanguageId { get; set; }
         public string? TextId { get; set; }
+        public string? ResourceId { get; set; }
+        public bool? NotTranslated { get; set; }
 
         public override List<Expression<Func<Translation, bool>>> ToWhereClause()
         {
@@ -21,6 +23,16 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
             if (!string.IsNullOrEmpty(TextId))
             {
                 list.Add(x => x.TextId == TextId);
+            }
+
+            if (!string.IsNullOrEmpty(ResourceId))
+            {
+                list.Add(x => x.ResourceId == ResourceId);
+            }
+
+            if (NotTranslated is not null)
+            {
+                list.Add(x => NotTranslated.Value && x.TextId == x.Destination || !NotTranslated.Value && x.TextId != x.Destination);
             }
 
             return list;

@@ -8,7 +8,6 @@
 
     <!--datatable css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     
     <link rel="stylesheet" href="/_content/fbognini.i18n.Dashboard/lib/Editor-2.0.5/css/editor.bootstrap5.css">
@@ -16,7 +15,26 @@
 
 
 <h1>Testi</h1>
-
+<div class="row mb-3">
+    <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="text-filter" class="form-label">Testo</label>
+          <input type="text" class="form-control" id="text-filter">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="mb-3">
+            <label for="resource-filter" class="form-label">Risorsa</label>
+            <input type="text" class="form-control" id="resource-filter">
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-12">
+        <button id="submit-form-btn" type="button" class="btn btn-primary">Cerca</button>
+    </div>
+</div>
+<hr />
 <div class="row">
     <table id="texts-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
         <thead>
@@ -62,9 +80,8 @@
                 ajax: {
                     create: restCreateEditorDatatables('@Url.Action("Create", "ApiText")'),
                     remove: function (_, _, d, success, error) {
-
-                        var queryParams = Object.values(d.data).map(item => "ids=" + item["id"]).join("&");
-                        restRemoveEditorDatatablesInner(url + "?" + queryParams, d, success, error, options);
+                        let _data = Object.values(d.data)[0];
+                        restRemoveEditorDatatablesInner('@Url.Action("Delete", "ApiText")' + "?textId=" + _data.textId + "&resourceId=" + _data.resourceId, d, success, error);
                     },
                 },
                 table: $("#texts-table"),
@@ -122,17 +139,27 @@
                     { data: "description" },
                     { data: "created" },
                 ],
+                select: {
+                    style: 'single'
+                },
                 buttons: [
                     {
                         text: "Nuovo",
                         extend: "create",
-                        editor: editor
+                        editor: editor,
+                        className: "btn btn-primary"
                     },
-                    //{
-                    //    text: "Modifica",
-                    //    extend: "editSingle",
-                    //    editor: editor
-                    //}
+                    {
+                        text: "Rimuovi",
+                        extend: "remove",
+                        editor: editor,
+                        formMessage: function (e, dt) {
+                            return (
+                                'Sei sicuro di voler eliminare il testo selezionato?<br/>Procedendo verranno eliminate anche le relative traduzioni'
+                            );
+                        },
+                        className: "btn btn-primary"
+                    }
                 ],
 
             });

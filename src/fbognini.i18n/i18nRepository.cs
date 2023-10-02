@@ -55,12 +55,35 @@ namespace fbognini.i18n
             return languages;
         }
 
+        public PaginationResponse<Language> GetPaginatedLanguages(SelectCriteria<Language> criteria) => GetPaginatedResponse<Language>(criteria);
+
         public void AddLanguage(Language language)
         {
             lock (context)
             {
                 _AddLanguage(language);
             }
+        }
+
+        public Language UpdateLanguage(string id, string description, bool isActive, bool isDefault)
+        {
+            var language = context.Languages.Find(id);
+            if (language is null)
+            {
+                throw new ArgumentException($"Invalid language {id}");
+            }
+
+            language.Description = description;
+            language.IsActive = isActive;
+            language.IsDefault = isDefault;
+
+            lock (context)
+            {
+                context.Languages.Update(language);
+                context.SaveChanges();
+            }
+
+            return language;
         }
 
         public void AddLanguageWithTranslations(Language language)
@@ -73,7 +96,7 @@ namespace fbognini.i18n
                 {
                     _AddLanguage(language);
 
-                    // TODO
+                    context.Database.ExecuteSqlRaw("EXEC [i18n].[AddTranslationsForLanguage] @LanguageId = {0}", language.Id);
 
                     transaction.Commit();
                 }

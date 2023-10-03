@@ -32,6 +32,7 @@
 <div class="row mb-3">
     <div class="col-12">
         <button id="submit-form-btn" type="button" class="btn btn-primary">Cerca</button>
+        <button id="clear-form-btn" type="button" class="btn btn-secondary">Svuota filtri</button>
     </div>
 </div>
 <hr />
@@ -70,6 +71,13 @@
             initializeDatatable();
 
             $("#submit-form-btn").on("click", function () {
+                table.ajax.reload();
+            });
+
+            $("#clear-form-btn").on("click", function () {
+                $("#resource-filter").val("");
+                $("#text-filter").val("");
+
                 table.ajax.reload();
             });
         });
@@ -127,7 +135,7 @@
                 stateSave: false,
                 searching: false,
                 ajax: function (data, callback, settings) {
-                    let url = '@Url.Action("Search", "ApiText")?languageId='+ $("#language-filter").val() + "&textId=" + $("#text-filter").val();
+                    let url = '@Url.Action("Search", "ApiText")?resourceId='+ $("#resource-filter").val() + "&textId=" + $("#text-filter").val();
                     var func = fullSearchDatatables(url);
                     func(data, callback, settings);
                 },

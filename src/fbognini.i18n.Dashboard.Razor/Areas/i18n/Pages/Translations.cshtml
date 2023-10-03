@@ -51,6 +51,7 @@
 <div class="row mb-3">
     <div class="col-12">
         <button id="submit-form-btn" type="button" class="btn btn-primary">Cerca</button>
+        <button id="clear-form-btn" type="button" class="btn btn-secondary">Svuota filtri</button>
     </div>
 </div>
 <hr />
@@ -90,6 +91,15 @@
             initializeDatatable();
 
             $("#submit-form-btn").on("click", function () {
+                table.ajax.reload();
+            });
+
+            $("#clear-form-btn").on("click", function () {
+                $("#language-filter").val("");
+                $("#text-filter").val("");
+                $("#resource-filter").val("");
+                $("#missing-translations-filter").prop("checked", false);
+
                 table.ajax.reload();
             });
         });

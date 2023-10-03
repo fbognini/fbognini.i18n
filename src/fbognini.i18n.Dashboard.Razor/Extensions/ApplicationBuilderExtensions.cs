@@ -14,13 +14,9 @@ namespace fbognini.i18n.Dashboard.Extensions
     {
         public static IApplicationBuilder UseI18nDashboard(this WebApplication app)
         {
-            //app.UseRouting();
-
             app.MapControllerRoute(
                 name: "Areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-            //app.MapRazorPages();
 
             return app;
         }

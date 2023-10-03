@@ -1,23 +1,24 @@
 ﻿using AutoMapper;
 using fbognini.AutoMapper.Extensions;
+using fbognini.i18n.Dashboard.Authorization;
 using fbognini.WebFramework.Handlers;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace fbognini.i18n.Dashboard.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services, bool authorize)
         {
-            //services.AddRazorPages();
+            services.AddRazorPages(options =>
+            {
+                if (authorize)
+                {
+                    options.Conventions.AuthorizeAreaFolder("i18n", "/", I18nDashboardPolicy.Dashboard);
+                }
+            });
 
             services.AddAutoMapper(delegate (IMapperConfigurationExpression config)
             {

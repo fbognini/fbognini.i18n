@@ -25,6 +25,7 @@ namespace fbognini.i18n
         IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations);
         void DeleteTranslations(string textId, string resourceId);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
+        Translation GetTranslation(string languageId, string textId, string resourceId);
         PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria);
         PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria);
 

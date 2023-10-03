@@ -19,8 +19,12 @@ body {
 
 
 /* Datatables */
-tbody tr.selected {
+tbody tr.selected, table.dataTable.table-striped > tbody > tr.odd.selected {
     color: white !important;
     background-color: #1f6bff !important;
+}
+
+.table-striped > tbody > tr.selected:nth-of-type(odd) > * {
+    color: white !important;
 }
 

@@ -136,6 +136,11 @@ namespace fbognini.i18n
             }
         }
 
+        public Translation GetTranslation(string languageId, string textId, string resourceId)
+        {
+            return context.Translations.Find(languageId, textId, resourceId);
+        }
+
         public PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria) => GetPaginatedResponse<Translation>(criteria);
 
         public PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria) => GetPaginatedResponse<Text>(criteria);

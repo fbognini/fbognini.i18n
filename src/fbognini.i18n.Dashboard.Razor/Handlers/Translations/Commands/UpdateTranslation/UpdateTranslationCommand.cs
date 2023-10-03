@@ -35,7 +35,7 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
                 };
                 i18NRepository.UpdateTranslation(translation);
 
-                return mapper.Map<TranslationDto>(translation);
+                return mapper.Map<TranslationDto>(i18NRepository.GetTranslation(command.LanguageId, command.TextId, command.ResourceId));
             }
         }
     }

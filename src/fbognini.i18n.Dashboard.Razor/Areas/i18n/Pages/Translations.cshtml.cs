@@ -1,4 +1,6 @@
-﻿using fbognini.i18n.Dashboard.Handlers.Translations;
+﻿using fbognini.i18n.Dashboard.Authorization;
+using fbognini.i18n.Dashboard.Handlers.Translations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

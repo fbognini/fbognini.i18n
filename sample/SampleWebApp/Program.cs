@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddI18N(builder.Configuration);
-builder.Services.AddI18nDashboardServices(builder.Configuration);
+builder.Services.AddI18nDashboardServices(authorize: false);
 
 var app = builder.Build();
 

@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddI18N(builder.Configuration);
-builder.Services.AddI18nDashboardServices(authorize: false);
+builder.Services.AddI18nDashboardServices(authorizeRazorPages: false);
 
 var app = builder.Build();
 
@@ -30,7 +30,7 @@ await app.InitializeI18N();
 
 app.UseRequestLocalizationI18N();
 
-app.UseI18nDashboard();
+app.UseI18nDashboard(authorizeApi: false);
 
 app.UseAuthorization();
 

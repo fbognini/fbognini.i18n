@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using fbognini.i18n.Dashboard.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,11 +13,16 @@ namespace fbognini.i18n.Dashboard.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseI18nDashboard(this WebApplication app)
+        public static IApplicationBuilder UseI18nDashboard(this WebApplication app, bool authorizeApi)
         {
-            app.MapControllerRoute(
+            var endpointBulder = app.MapControllerRoute(
                 name: "Areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+            if (authorizeApi)
+            {
+                endpointBulder.RequireAuthorization(I18nDashboardPolicy.Dashboard);
+            }
 
             return app;
         }

@@ -10,11 +10,11 @@ namespace fbognini.i18n.Dashboard.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services, bool authorize)
+        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services, bool authorizeRazorPages)
         {
             services.AddRazorPages(options =>
             {
-                if (authorize)
+                if (authorizeRazorPages)
                 {
                     options.Conventions.AuthorizeAreaFolder("i18n", "/", I18nDashboardPolicy.Dashboard);
                 }

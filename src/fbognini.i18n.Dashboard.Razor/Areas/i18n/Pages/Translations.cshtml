@@ -79,6 +79,8 @@
     <script src="https://cdn.datatables.net/plug-ins/1.11.3/dataRender/datetime.js"></script>
     <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
     <script src="/_content/fbognini.i18n.Dashboard/js/fbognini-pagination-1.0.1.js"></script>
     <script src="/_content/fbognini.i18n.Dashboard/lib/Editor-2.0.5/js/dataTables.editor.js"></script>
     <script src="/_content/fbognini.i18n.Dashboard/lib/Editor-2.0.5/js/editor.bootstrap5.js"></script>
@@ -192,7 +194,10 @@
                     { data: "textId" },
                     { data: "resourceId" },
                     { data: "destination" },
-                    { data: "updated" },
+                    { 
+                        data: "updated",
+                        render: renderDatatableDateTime(["YYYY-MM-DDTHH:mm:ss.SSSSSSS", "YYYY-MM-DDTHH:mm:ss.SSSSSSSZ"], 'DD/MM/YYYY HH:mm')
+                    },
                 ],
                 select: {
                     style: 'single'

@@ -48,7 +48,7 @@ namespace fbognini.i18n
             {
                 lock (context)
                 {
-                    languages = context.Languages.ToList();
+                    _LoadLanguages();
                 }
             }
 
@@ -81,6 +81,8 @@ namespace fbognini.i18n
             {
                 context.Languages.Update(language);
                 context.SaveChanges();
+
+                _LoadLanguages();
             }
 
             return language;
@@ -308,6 +310,13 @@ namespace fbognini.i18n
             context.Languages.Add(language);
 
             context.SaveChanges();
+
+            _LoadLanguages();
+        }
+
+        private void _LoadLanguages()
+        {
+            languages = context.Languages.ToList();
         }
 
         private void UpdateTranslation(Translation translation, bool saveChanges = true)

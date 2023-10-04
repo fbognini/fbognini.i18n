@@ -18,6 +18,8 @@ namespace fbognini.i18n.Dashboard.Extensions
                 {
                     options.Conventions.AuthorizeAreaFolder("i18n", "/", I18nDashboardPolicy.Dashboard);
                 }
+
+                options.Conventions.AddAreaPageRoute("i18n", "/Languages", "i18n");
             });
 
             services.AddAutoMapper(delegate (IMapperConfigurationExpression config)

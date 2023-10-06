@@ -1,4 +1,5 @@
 using fbognini.i18n;
+using fbognini.i18n.Dashboard;
 using fbognini.i18n.Dashboard.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddI18N(builder.Configuration);
-builder.Services.AddI18nDashboardServices(authorizeRazorPages: false);
+builder.Services.AddI18nDashboardServices();
 
 var app = builder.Build();
 
@@ -30,7 +31,10 @@ await app.InitializeI18N();
 
 app.UseRequestLocalizationI18N();
 
-app.UseI18nDashboard(authorizeApi: false);
+var dashboardOptions = new DashboardOptions()
+{
+};
+app.UseI18nDashboard(options: dashboardOptions);
 
 app.UseAuthorization();
 

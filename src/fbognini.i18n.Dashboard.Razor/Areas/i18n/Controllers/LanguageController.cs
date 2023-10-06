@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
 {
-    [Area("i18n")]
     public class ApiLanguageController : BaseApiController
     {
         [HttpGet]

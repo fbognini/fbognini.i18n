@@ -10,17 +10,9 @@ namespace fbognini.i18n.Dashboard.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services, bool authorizeRazorPages)
+        public static IServiceCollection AddI18nDashboardServices(this IServiceCollection services)
         {
-            services.AddRazorPages(options =>
-            {
-                if (authorizeRazorPages)
-                {
-                    options.Conventions.AuthorizeAreaFolder("i18n", "/", I18nDashboardPolicy.Dashboard);
-                }
-
-                options.Conventions.AddAreaPageRoute("i18n", "/Languages", "i18n");
-            });
+            services.AddControllersWithViews();
 
             services.AddAutoMapper(delegate (IMapperConfigurationExpression config)
             {

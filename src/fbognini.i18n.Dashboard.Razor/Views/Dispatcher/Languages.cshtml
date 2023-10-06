@@ -1,10 +1,5 @@
-﻿@page
-@model fbognini.i18n.Dashboard.i18n.Pages.LanguageModel
-@{
-    Layout = "_i18nLayout.cshtml";
-}
-
-@section Styles{
+﻿@section Styles
+{
 
     <!--datatable css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
@@ -56,8 +51,8 @@
             editor = new $.fn.dataTable.Editor({
                 idSrc: "id",
                 ajax: {
-                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiLanguage")'),
-                    edit: restEditEditorDatatables('@Url.Action("Update", "ApiLanguage")'),
+                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiLanguage", new { Area = DashboardContants.Area })'),
+                    edit: restEditEditorDatatables('@Url.Action("Update", "ApiLanguage", new { Area = DashboardContants.Area })'),
                 },
                 table: $("#languages-table"),
                 fields: [
@@ -133,7 +128,7 @@
                 stateSave: false,
                 searching: false,
                 ajax: function (data, callback, settings) {
-                    let url = '@Url.Action("Search", "ApiLanguage")';
+                    let url = '@Url.Action("Search", "ApiLanguage", new { Area = DashboardContants.Area })';
                     var func = fullSearchDatatables(url);
                     func(data, callback, settings);
                 },

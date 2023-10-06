@@ -1,10 +1,5 @@
-﻿@page
-@model fbognini.i18n.Dashboard.i18n.Pages.TranslationModel
-@{
-    Layout = "_i18nLayout.cshtml";
-}
-
-@section Styles{
+﻿@section Styles
+{
 
     <!--datatable css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
@@ -14,37 +9,18 @@
 }
 
 
-<h1 class="mb-3">Traduzioni</h1>
-
+<h1 class="mb-3">Testi</h1>
 <div class="row mb-3">
-    <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="language-filter" class="form-label">Lingua</label>
-          <input type="text" class="form-control" id="language-filter">
-        </div>
-    </div>
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="mb-3">
           <label for="text-filter" class="form-label">Testo</label>
           <input type="text" class="form-control" id="text-filter">
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="mb-3">
             <label for="resource-filter" class="form-label">Risorsa</label>
             <input type="text" class="form-control" id="resource-filter">
-        </div>
-    </div>
-</div>
-<div class="row mb-3">
-    <div class="col-lg-6">
-        <div class="mb-3">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="missing-translations-filter">
-                <label class="form-check-label" for="missing-translations-filter">
-                    Mostra traduzioni mancanti
-                </label>
-            </div>
         </div>
     </div>
 </div>
@@ -56,14 +32,13 @@
 </div>
 <hr />
 <div class="row">
-    <table id="translations-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+    <table id="texts-table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
         <thead>
             <tr>
-                <th>Lingua</th>
                 <th>Testo</th>
                 <th>Risorsa</th>
-                <th>Destinazione</th>
-                <th>Aggiornamento</th>
+                <th>Descrizione</th>
+                <th>Data creazione</th>
             </tr>
         </thead>
     </table>
@@ -97,10 +72,8 @@
             });
 
             $("#clear-form-btn").on("click", function () {
-                $("#language-filter").val("");
-                $("#text-filter").val("");
                 $("#resource-filter").val("");
-                $("#missing-translations-filter").prop("checked", false);
+                $("#text-filter").val("");
 
                 table.ajax.reload();
             });
@@ -110,15 +83,14 @@
             editor = new $.fn.dataTable.Editor({
                 idSrc: "id",
                 ajax: {
-                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiTranslation")'),
-                    edit: restEditEditorDatatables('@Url.Action("Update", "ApiTranslation")'),
-                },
-                table: $("#translations-table"),
-                fields: [
-                    {
-                        label: "Lingua*",
-                        name: "languageId",
+                    create: restCreateEditorDatatables('@Url.Action("Create", "ApiText", new { Area = DashboardContants.Area })'),
+                    remove: function (_, _, d, success, error) {
+                        let _data = Object.values(d.data)[0];
+                        restRemoveEditorDatatablesInner('@Url.Action("Delete", "ApiText", new { Area = DashboardContants.Area })' + "?textId=" + _data.textId + "&resourceId=" + _data.resourceId, d, success, error);
                     },
+                },
+                table: $("#texts-table"),
+                fields: [
                     {
                         label: "Testo*",
                         name: "textId",
@@ -128,25 +100,13 @@
                         name: "resourceId",
                     },
                     {
-                        label: "Destinazione*",
-                        name: "destination",
+                        label: "Descrizione",
+                        name: "description",
                     },
                 ]
             })
-            .on("initEdit", function () {
-                editor.disable('languageId');
-                editor.disable('textId');
-                editor.disable('resourceId');
-            })
             .on("preSubmit", function (e, data, action) {
                 if (action !== 'remove') {
-                    let languageId = this.field('languageId');
-                    if (!languageId.isMultiValue()) {
-                        if (!languageId.val()) {
-                            languageId.error('Lingua obbligatorio');
-                        }
-                    }
-
                     let textId = this.field('textId');
                     if (!textId.isMultiValue()) {
                         if (!textId.val()) {
@@ -160,13 +120,6 @@
                             resourceId.error('Risorsa obbligatorio');
                         }
                     }
-                    
-                    let destination = this.field('destination');
-                    if (!destination.isMultiValue()) {
-                        if (!destination.val()) {
-                            destination.error('Destinazione obbligatorio');
-                        }
-                    }
 
                     if (this.inError()) {
                         return false;
@@ -174,28 +127,23 @@
                 }
             });
             
-            let dummyIdCounter = 0;
-            table = $('#translations-table').DataTable({
+            table = $('#texts-table').DataTable({
                 dom: 'Bfrtip',
                 stateSave: false,
                 searching: false,
                 ajax: function (data, callback, settings) {
-                    let url = '@Url.Action("Search", "ApiTranslation")?languageId=' + $("#language-filter").val() 
-                        + "&textId=" + $("#text-filter").val() 
-                        + "&resourceId=" + $("#resource-filter").val() 
-                        + "&OnlyNotTranslated=" + $("#missing-translations-filter").is(":checked");
+                    let url = '@Url.Action("Search", "ApiText", new { Area = DashboardContants.Area })?resourceId=' + $("#resource-filter").val() + "&textId=" + $("#text-filter").val();
                     var func = fullSearchDatatables(url);
                     func(data, callback, settings);
                 },
                 order: [[0, "desc"]],
                 // Columns Setups
                 columns: [
-                    { data: "languageId" },
                     { data: "textId" },
                     { data: "resourceId" },
-                    { data: "destination" },
+                    { data: "description" },
                     { 
-                        data: "updated",
+                        data: "created",
                         render: renderDatatableDateTime(["YYYY-MM-DDTHH:mm:ss.SSSSSSS", "YYYY-MM-DDTHH:mm:ss.SSSSSSSZ"], 'DD/MM/YYYY HH:mm')
                     },
                 ],
@@ -204,9 +152,20 @@
                 },
                 buttons: [
                     {
-                        text: "Modifica",
-                        extend: "editSingle",
+                        text: "Nuovo",
+                        extend: "create",
                         editor: editor,
+                        className: "btn btn-primary"
+                    },
+                    {
+                        text: "Rimuovi",
+                        extend: "remove",
+                        editor: editor,
+                        formMessage: function (e, dt) {
+                            return (
+                                'Sei sicuro di voler eliminare il testo selezionato?<br/>Procedendo verranno eliminate anche le relative traduzioni'
+                            );
+                        },
                         className: "btn btn-primary"
                     }
                 ],

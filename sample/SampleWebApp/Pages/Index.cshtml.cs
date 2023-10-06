@@ -17,17 +17,6 @@ namespace SampleWebApp.Pages
 
         public async Task OnGet()
         {
-
-            var language = Thread.CurrentThread.CurrentCulture.Name;
-            DateTime? date = new DateTime(1970, 1, 1).AddTicks(1654512062397 * 10000);
-
-            var ciccio = i18NRepository.GetTranslations("it-IT", null, "Site", date);
-
-            i18NRepository.AddTranslations("chiave2", "TEXT", "descrizione", new Dictionary<string, string>()
-            {
-                ["it-IT"] = "italiano2",
-                ["en-GB"] = "inglese2",
-            });
         }
     }
 }

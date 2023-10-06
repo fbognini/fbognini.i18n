@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace fbognini.i18n.Dashboard.Areas.i18n.Controllers
 {
+    [Area(DashboardContants.Area)]
     public abstract class BaseApiController : Controller
     {
         private IMediator? mediator;

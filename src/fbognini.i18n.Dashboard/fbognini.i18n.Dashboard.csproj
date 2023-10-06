@@ -1,24 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<Version>1.0.0</Version>
+		<Authors>Francesco Bognini</Authors>
+		<Company>Francesco Bognini</Company>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/fbognini/fbognini.i18n</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/fbognini/fbognini.i18n</RepositoryUrl>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="fbognini.AutoMapper" Version="1.0.1" />
-    <PackageReference Include="fbognini.WebFramework" Version="8.3.5" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="fbognini.AutoMapper" Version="1.0.1" />
+		<PackageReference Include="fbognini.i18n" Version="7.1.0" />
+		<PackageReference Include="fbognini.WebFramework" Version="8.3.5" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\fbognini.i18n\fbognini.i18n.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 
 </Project>

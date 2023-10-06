@@ -1,6 +1,5 @@
 ﻿using fbognini.Core.Data;
 using fbognini.i18n.Persistence.Entities;
-using Humanizer.Localisation;
 using System.Linq.Expressions;
 
 namespace fbognini.i18n.Dashboard.Handlers.Texts

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\fbognini.i18n.Dashboard.Razor\fbognini.i18n.Dashboard.csproj" />
+    <ProjectReference Include="..\..\src\fbognini.i18n.Dashboard\fbognini.i18n.Dashboard.csproj" />
     <ProjectReference Include="..\..\src\fbognini.i18n\fbognini.i18n.csproj" />
   </ItemGroup>
 

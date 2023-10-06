@@ -1,15 +1,17 @@
-﻿using fbognini.i18n.Persistence;
+﻿using fbognini.Core.Data;
+using fbognini.Core.Data.Pagination;
+using fbognini.i18n.Persistence;
 using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Snickler.EFCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Transactions;
+using Text = fbognini.i18n.Persistence.Entities.Text;
 
 namespace fbognini.i18n
 {
@@ -36,12 +38,6 @@ namespace fbognini.i18n
             }
         }
 
-        //public string Translate(string language, int source)
-        //{
-        //    var entity = context.Translations.Find(language, source);
-        //    return entity?.Destination;
-        //}
-
         public List<string> Languages => context.Languages
             .Where(x => x.IsActive)
             .Select(x => x.Id).ToList();
@@ -52,11 +48,66 @@ namespace fbognini.i18n
             {
                 lock (context)
                 {
-                    languages = context.Languages.ToList();
+                    _LoadLanguages();
                 }
             }
 
             return languages;
+        }
+
+        public PaginationResponse<Language> GetPaginatedLanguages(SelectCriteria<Language> criteria) => GetPaginatedResponse<Language>(criteria);
+
+        public void AddLanguage(Language language)
+        {
+            lock (context)
+            {
+                _AddLanguage(language);
+            }
+        }
+
+        public Language UpdateLanguage(string id, string description, bool isActive, bool isDefault)
+        {
+            var language = context.Languages.Find(id);
+            if (language is null)
+            {
+                throw new ArgumentException($"Invalid language {id}");
+            }
+
+            language.Description = description;
+            language.IsActive = isActive;
+            language.IsDefault = isDefault;
+
+            lock (context)
+            {
+                context.Languages.Update(language);
+                context.SaveChanges();
+
+                _LoadLanguages();
+            }
+
+            return language;
+        }
+
+        public void AddLanguageWithTranslations(Language language)
+        {
+            lock (context)
+            {
+                using var transaction = context.Database.BeginTransaction();
+
+                try
+                {
+                    _AddLanguage(language);
+
+                    context.Database.ExecuteSqlRaw("EXEC [i18n].[AddTranslationsForLanguage] @LanguageId = {0}", language.Id);
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
 
         public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)
@@ -86,6 +137,15 @@ namespace fbognini.i18n
                 return query.ToList();
             }
         }
+
+        public Translation GetTranslation(string languageId, string textId, string resourceId)
+        {
+            return context.Translations.Find(languageId, textId, resourceId);
+        }
+
+        public PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria) => GetPaginatedResponse<Translation>(criteria);
+
+        public PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria) => GetPaginatedResponse<Text>(criteria);
 
         public IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations)
         {
@@ -135,6 +195,16 @@ namespace fbognini.i18n
             }
 
             return text.Translations;
+        }
+
+        public void DeleteTranslations(string textId, string resourceId)
+        {
+            lock (context)
+            {
+                context.Translations.RemoveRange(context.Translations.Where(x => x.TextId == textId && x.ResourceId == resourceId));
+                context.Texts.Remove(context.Texts.Find(textId, resourceId));
+                context.SaveChanges();
+            }
         }
 
         public void UpdateTranslation(Translation translation)
@@ -235,6 +305,20 @@ namespace fbognini.i18n
             }
         }
 
+        private void _AddLanguage(Language language)
+        {
+            context.Languages.Add(language);
+
+            context.SaveChanges();
+
+            _LoadLanguages();
+        }
+
+        private void _LoadLanguages()
+        {
+            languages = context.Languages.ToList();
+        }
+
         private void UpdateTranslation(Translation translation, bool saveChanges = true)
         {
             var entity = context.Translations.Find(translation.LanguageId, translation.TextId, translation.ResourceId);
@@ -281,6 +365,23 @@ namespace fbognini.i18n
             }
 
             return records;
+        }
+
+        private PaginationResponse<T> GetPaginatedResponse<T>(SelectCriteria<T> criteria)
+            where T : class
+        {
+            lock (context)
+            {
+                var query = context.Set<T>().QuerySelect(criteria).QuerySearch(criteria, out var pagination);
+                var list = query.ToList();
+                var response = new PaginationResponse<T>()
+                {
+                    Pagination = pagination,
+                    Items = list
+                };
+
+                return response;
+            }
         }
     }
 }

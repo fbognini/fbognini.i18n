@@ -135,10 +135,32 @@ namespace fbognini.i18n.Localizers
             var attribute = resourceSource.GetCustomAttributes(typeof(I18NKeyAttribute), false).SingleOrDefault();
             if (attribute == null)
             {
-                return resourceSource.Name;
+                return GetRecursiveResourceName(resourceSource);
             }
 
             return ((I18NKeyAttribute)attribute).Key;
+        }
+
+
+        private static string GetRecursiveResourceName(Type resourceSource)
+        {
+            var builder = GetRecursiveResourceName(resourceSource, new StringBuilder());
+            if (builder.Length > 0)
+            {
+                builder = builder.Remove(builder.Length - 1, 1);
+            }
+
+            return builder.ToString();
+        }
+
+        private static StringBuilder GetRecursiveResourceName(Type resourceSource, StringBuilder name)
+        {
+            if (resourceSource == null)
+            {
+                return name;
+            }
+
+            return GetRecursiveResourceName(resourceSource.DeclaringType, name.Insert(0, '.').Insert(0, resourceSource.Name));
         }
     }
 }

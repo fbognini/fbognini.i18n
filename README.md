@@ -1,4 +1,6 @@
-# fbognini.i18n.Dashboard
+# fbognini.i18n
+
+## fbognini.i18n.Dashboard
 
 If you're using MVC, please register "Area ControllerRoute" and "Default ControllerRoute" before `app.UseI18nDashboard()`.
 For example:

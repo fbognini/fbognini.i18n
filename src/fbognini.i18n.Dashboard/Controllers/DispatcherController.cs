@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using fbognini.i18n.Dashboard;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace fbognini.i18n.Controllers
         {
             if (string.IsNullOrWhiteSpace(view))
             {
-                return RedirectToAction(nameof(Index), "Languages");
+                return RedirectToAction(nameof(Index), "Languages", new { Area = DashboardContants.Area });
             }
 
             return View(view);

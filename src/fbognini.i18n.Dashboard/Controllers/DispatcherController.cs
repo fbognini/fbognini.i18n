@@ -1,4 +1,4 @@
-﻿using fbognini.i18n.Dashboard;
+using fbognini.i18n.Dashboard;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

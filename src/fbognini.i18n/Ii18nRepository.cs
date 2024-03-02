@@ -1,7 +1,6 @@
-﻿using fbognini.Core.Data.Pagination;
-using fbognini.Core.Data;
+﻿using fbognini.Core.Domain.Query.Pagination;
+using fbognini.Core.Domain.Query;
 using fbognini.i18n.Persistence.Entities;
-using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -17,7 +16,7 @@ namespace fbognini.i18n
 
 
         IEnumerable<Language> GetLanguages();
-        PaginationResponse<Language> GetPaginatedLanguages(SelectCriteria<Language> criteria);
+        PaginationResponse<Language> GetPaginatedLanguages(QueryableCriteria<Language> criteria);
         void AddLanguage(Language language);
         void AddLanguageWithTranslations(Language language);
         Language UpdateLanguage(string id, string description, bool isActive, bool isDefault);
@@ -26,13 +25,13 @@ namespace fbognini.i18n
         void DeleteTranslations(string textId, string resourceId);
         IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null);
         Translation GetTranslation(string languageId, string textId, string resourceId);
-        PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria);
-        PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria);
+        PaginationResponse<Translation> GetPaginatedTranslations(QueryableCriteria<Translation> criteria);
+        PaginationResponse<Text> GetPaginatedTexts(QueryableCriteria<Text> criteria);
 
         void UpdateTranslation(Translation translation);
         void UpdateTranslations(List<Translation> translations);
 
-        void ImportExcel(string path, bool all, bool deletenotmatched);
+        void ImportExcel(string path, bool all, bool deleteNotMatched);
         byte[] ExportExcel();
 
         /// <summary>

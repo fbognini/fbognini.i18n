@@ -1,10 +1,10 @@
-﻿using fbognini.Core.Data;
+﻿using fbognini.Core.Domain.Query;
 using fbognini.i18n.Persistence.Entities;
 using System.Linq.Expressions;
 
 namespace fbognini.i18n.Dashboard.Handlers.Languages
 {
-    internal class LanguageSelectCriteria : SelectCriteria<Language>
+    internal class LanguageSelectCriteria : QueryableCriteria<Language>
     {
 
         public override List<Expression<Func<Language, bool>>> ToWhereClause()

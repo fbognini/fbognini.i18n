@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using fbognini.i18n.Persistence.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace fbognini.i18n.Dashboard.Handlers.Texts
 {
@@ -11,14 +9,11 @@ namespace fbognini.i18n.Dashboard.Handlers.Texts
 
         internal class DeleteTextCommandHandler : IRequestHandler<DeleteTextCommand>
         {
-            private readonly IMapper mapper;
             private readonly II18nRepository i18NRepository;
 
             public DeleteTextCommandHandler(
-                IMapper mapper,
                 II18nRepository i18nRepository)
             {
-                this.mapper = mapper;
                 i18NRepository = i18nRepository;
             }
 

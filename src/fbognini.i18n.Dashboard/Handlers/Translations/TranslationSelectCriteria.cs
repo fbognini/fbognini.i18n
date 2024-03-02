@@ -1,10 +1,10 @@
-﻿using fbognini.Core.Data;
+﻿using fbognini.Core.Domain.Query;
 using fbognini.i18n.Persistence.Entities;
 using System.Linq.Expressions;
 
 namespace fbognini.i18n.Dashboard.Handlers.Translations
 {
-    internal class TranslationSelectCriteria : SelectCriteria<Translation>
+    internal class TranslationSelectCriteria : QueryableCriteria<Translation>
     {
         public string? LanguageId { get; set; }
         public string? TextId { get; set; }

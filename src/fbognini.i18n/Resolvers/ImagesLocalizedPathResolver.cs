@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace fbognini.i18n.Resolvers
 {
-    public class ImageAllLocalizedPathResolver : IMemberValueResolver<object, object, string, List<LocalizedImage>>
+    public class ImagesLocalizedPathResolver : IMemberValueResolver<object, object, string, List<LocalizedImage>>
     {
         private readonly II18nRepository localizer;
-        public ImageAllLocalizedPathResolver(II18nRepository localizer)
+        public ImagesLocalizedPathResolver(II18nRepository localizer)
         {
             this.localizer = localizer;
         }

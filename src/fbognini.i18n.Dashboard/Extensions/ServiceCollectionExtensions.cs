@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using fbognini.AutoMapper.Extensions;
-using fbognini.i18n.Dashboard.Authorization;
-using fbognini.WebFramework.Handlers;
+﻿using fbognini.WebFramework.Handlers;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace fbognini.i18n.Dashboard.Extensions
@@ -14,10 +10,6 @@ namespace fbognini.i18n.Dashboard.Extensions
         {
             services.AddControllersWithViews();
 
-            services.AddAutoMapper(delegate (IMapperConfigurationExpression config)
-            {
-                config.AddCustomMappingProfile<IMarker>();
-            });
             services.AddValidatorsFromAssemblyContaining<IMarker>();
 
             services.AddMediatR(cfg =>

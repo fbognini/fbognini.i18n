@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using fbognini.i18n.Dashboard.Helpers;
 using fbognini.i18n.Persistence.Entities;
 using MediatR;
 
@@ -13,14 +13,11 @@ namespace fbognini.i18n.Dashboard.Handlers.Languages
 
         internal class CreateLanguageCommandHandler : IRequestHandler<CreateLanguageCommand, LanguageDto>
         {
-            private readonly IMapper mapper;
             private readonly II18nRepository i18NRepository;
 
             public CreateLanguageCommandHandler(
-                IMapper mapper,
                 II18nRepository i18nRepository)
             {
-                this.mapper = mapper;
                 i18NRepository = i18nRepository;
             }
 
@@ -33,9 +30,10 @@ namespace fbognini.i18n.Dashboard.Handlers.Languages
                     IsActive = command.IsActive,
                     IsDefault = command.IsDefault
                 };
+
                 i18NRepository.AddLanguageWithTranslations(language);
 
-                return mapper.Map<LanguageDto>(language);
+                return language.ToDto();
             }
         }
     }

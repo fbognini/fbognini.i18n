@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using fbognini.Core.Data.Pagination;
+﻿using fbognini.Core.Domain.Query.Pagination;
+using fbognini.i18n.Dashboard.Helpers;
 using fbognini.WebFramework.FullSearch;
 using MediatR;
 
@@ -16,14 +16,11 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
 
         internal class GetPaginatedTranslationsQueryHandler : IRequestHandler<GetPaginatedTranslationsQuery, PaginationResponse<TranslationDto>>
         {
-            private readonly IMapper mapper;
             private readonly II18nRepository i18NRepository;
 
             public GetPaginatedTranslationsQueryHandler(
-                IMapper mapper,
                 II18nRepository i18nRepository)
             {
-                this.mapper = mapper;
                 i18NRepository = i18nRepository;
             }
 
@@ -41,7 +38,7 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
 
                 return new PaginationResponse<TranslationDto>()
                 {
-                    Items = mapper.Map<List<TranslationDto>>(response.Items),
+                    Items = response.Items.Select(x => x.ToDto()).ToList(),
                     Pagination = response.Pagination,
                 };
             }

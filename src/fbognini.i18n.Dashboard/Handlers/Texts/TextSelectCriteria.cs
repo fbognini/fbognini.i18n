@@ -1,10 +1,10 @@
-﻿using fbognini.Core.Data;
+﻿using fbognini.Core.Domain.Query;
 using fbognini.i18n.Persistence.Entities;
 using System.Linq.Expressions;
 
 namespace fbognini.i18n.Dashboard.Handlers.Texts
 {
-    internal class TextSelectCriteria : SelectCriteria<Text>
+    internal class TextSelectCriteria : QueryableCriteria<Text>
     {
         public string? TextId { get; set; }
         public string? ResourceId { get; set; }

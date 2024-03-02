@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-		<Version>1.0.1</Version>
+		<Version>2.0.1</Version>
 		<Authors>Francesco Bognini</Authors>
 		<Company>Francesco Bognini</Company>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -19,9 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="fbognini.AutoMapper" Version="1.0.1" />
-		<PackageReference Include="fbognini.i18n" Version="7.1.0" />
-		<PackageReference Include="fbognini.WebFramework" Version="8.3.5" />
+		<PackageReference Include="fbognini.i18n" Version="8.0.1" />
+		<PackageReference Include="fbognini.WebFramework" Version="10.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

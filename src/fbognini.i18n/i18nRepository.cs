@@ -1,11 +1,9 @@
-﻿using fbognini.Core.Data;
-using fbognini.Core.Data.Pagination;
+﻿using ClosedXML.Excel;
+using fbognini.Core.Domain.Query;
+using fbognini.Core.Domain.Query.Pagination;
 using fbognini.i18n.Persistence;
 using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using Snickler.EFCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,7 +53,7 @@ namespace fbognini.i18n
             return languages;
         }
 
-        public PaginationResponse<Language> GetPaginatedLanguages(SelectCriteria<Language> criteria) => GetPaginatedResponse<Language>(criteria);
+        public PaginationResponse<Language> GetPaginatedLanguages(QueryableCriteria<Language> criteria) => GetPaginatedResponse<Language>(criteria);
 
         public void AddLanguage(Language language)
         {
@@ -143,9 +141,9 @@ namespace fbognini.i18n
             return context.Translations.Find(languageId, textId, resourceId);
         }
 
-        public PaginationResponse<Translation> GetPaginatedTranslations(SelectCriteria<Translation> criteria) => GetPaginatedResponse<Translation>(criteria);
+        public PaginationResponse<Translation> GetPaginatedTranslations(QueryableCriteria<Translation> criteria) => GetPaginatedResponse<Translation>(criteria);
 
-        public PaginationResponse<Text> GetPaginatedTexts(SelectCriteria<Text> criteria) => GetPaginatedResponse<Text>(criteria);
+        public PaginationResponse<Text> GetPaginatedTexts(QueryableCriteria<Text> criteria) => GetPaginatedResponse<Text>(criteria);
 
         public IEnumerable<Translation> AddTranslations(string textId, string resourceId, string description, Dictionary<string, string> translations)
         {
@@ -225,19 +223,20 @@ namespace fbognini.i18n
             }
         }
 
-        public void ImportExcel(string path, bool all, bool deletenotmatched)
+        public void ImportExcel(string path, bool all, bool deleteNotMatched)
         {
             var translations = GetExcelRecords(path);
 
-            ImportTranslations(translations, all, deletenotmatched);
+            ImportTranslations(translations, all, deleteNotMatched);
         }
 
         public byte[] ExportExcel()
         {
             var translations = GetTranslations(null, null, null, null);
 
-            using var package = new ExcelPackage();
-            var worksheet = package.Workbook.Worksheets.Add("Texts");
+            using var workbook = new XLWorkbook();
+
+            var worksheet = workbook.Worksheets.Add("Texts");
 
             var header = new List<string[]>
                     {
@@ -249,15 +248,17 @@ namespace fbognini.i18n
                             "Updated", },
                     };
 
-            var headerRange = worksheet.Cells["A1:E1"];
+            var headerRange = worksheet.Cell("A1").InsertData(header);
             headerRange.Style.Font.Bold = true;
-            headerRange.LoadFromArrays(header);
 
-            worksheet.Cells[2, 1, translations.Count() + 1, 8]
-                .LoadFromArrays(translations.Select(x => new string[] { x.LanguageId, x.TextId, x.ResourceId, x.Destination, x.Updated.ToString() }).ToArray());
+            worksheet.Cell(2, 1).InsertData(translations.Select(x => new string[] { x.LanguageId, x.TextId, x.ResourceId, x.Destination, x.Updated.ToString() }).ToArray());
 
-            return package.GetAsByteArray();
-        }
+            using var ms = new MemoryStream();
+
+            workbook.SaveAs(ms);
+
+            return ms.ToArray();
+    }
 
         public void ImportTranslations(IEnumerable<Translation> translations, bool all, bool deletenotmatched)
         {
@@ -340,19 +341,21 @@ namespace fbognini.i18n
 
         private static List<Translation> GetExcelRecords(string path)
         {
-            using var package = new ExcelPackage(new FileInfo(path));
-            var worksheet = package.Workbook.Worksheets[0];
 
-            int rowCount = worksheet.Dimension.End.Row;
+            using var workbook = new XLWorkbook(path);
+
+            var worksheet = workbook.Worksheets.First();
+
+            int rowCount = worksheet.ColumnCount();
 
             var records = new List<Translation>();
             for (int i = 2; i <= rowCount; i++)
             {
-                var languageId = worksheet.Cells[i, 1].Value?.ToString().Trim();
-                var textId = worksheet.Cells[i, 2].Value?.ToString().Trim();
-                var resourceId = worksheet.Cells[i, 3].Value?.ToString().Trim();
-                var destination = worksheet.Cells[i, 4].Value?.ToString().Trim();
-                var updated = worksheet.Cells[i, 5].Value?.ToString().Trim();
+                var languageId = worksheet.Cell(i, 1).GetString().Trim();
+                var textId = worksheet.Cell(i, 2).GetString().Trim();
+                var resourceId = worksheet.Cell(i, 3).GetString().Trim();
+                var destination = worksheet.Cell(i, 4).GetString().Trim();
+                var updated = worksheet.Cell(i, 5).GetString().Trim();
 
                 records.Add(new Translation
                 {
@@ -367,7 +370,7 @@ namespace fbognini.i18n
             return records;
         }
 
-        private PaginationResponse<T> GetPaginatedResponse<T>(SelectCriteria<T> criteria)
+        private PaginationResponse<T> GetPaginatedResponse<T>(QueryableCriteria<T> criteria)
             where T : class
         {
             lock (context)

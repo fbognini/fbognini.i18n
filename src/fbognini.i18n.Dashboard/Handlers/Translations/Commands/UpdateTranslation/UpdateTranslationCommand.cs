@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using fbognini.i18n.Dashboard.Helpers;
 using fbognini.i18n.Persistence.Entities;
 using MediatR;
 
@@ -13,14 +13,11 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
 
         internal class UpdateTranslationCommandHandler : IRequestHandler<UpdateTranslationCommand, TranslationDto>
         {
-            private readonly IMapper mapper;
             private readonly II18nRepository i18NRepository;
 
             public UpdateTranslationCommandHandler(
-                IMapper mapper,
                 II18nRepository i18nRepository)
             {
-                this.mapper = mapper;
                 i18NRepository = i18nRepository;
             }
 
@@ -35,7 +32,7 @@ namespace fbognini.i18n.Dashboard.Handlers.Translations
                 };
                 i18NRepository.UpdateTranslation(translation);
 
-                return mapper.Map<TranslationDto>(i18NRepository.GetTranslation(command.LanguageId, command.TextId, command.ResourceId));
+                return i18NRepository.GetTranslation(command.LanguageId, command.TextId, command.ResourceId).ToDto();
             }
         }
     }

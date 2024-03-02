@@ -136,7 +136,7 @@ namespace fbognini.i18n
             services.AddTransient<LocalizedPathResolver>();
             services.AddTransient<NotLocalizedPathResolver>();
 
-            services.AddTransient<ImageAllLocalizedPathResolver>();
+            services.AddTransient<ImagesLocalizedPathResolver>();
             services.AddTransient<ImageNotLocalizedPathResolver>();
             services.AddDbContext<I18nContext>(options =>
                 options.UseSqlServer(settings.ConnectionString),

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace fbognini.i18n.Resolvers
 {
-    public class TranslateResolver : IMemberValueResolver<object, object, string, string>
+    public class TranslateResolver : IMemberValueResolver<object, object, string?, string?>
     {
         private readonly IExtendedStringLocalizerFactory stringLocalizerFactory;
 
@@ -14,7 +14,7 @@ namespace fbognini.i18n.Resolvers
             this.stringLocalizerFactory = stringLocalizerFactory;
         }
 
-        public string Resolve(object source, object destination, string sourceMember, string destMember,
+        public string? Resolve(object source, object destination, string? sourceMember, string? destMember,
             ResolutionContext context)
         {
             if (string.IsNullOrWhiteSpace(sourceMember))

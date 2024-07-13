@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace fbognini.i18n.Resolvers
 {
-    public class LocalizedPathResolver : IMemberValueResolver<object, object, string, string>
+    public class LocalizedPathResolver : IMemberValueResolver<object, object, string?, string?>
     {
         private readonly II18nRepository localizer;
         public LocalizedPathResolver(II18nRepository localizer)
@@ -12,7 +12,7 @@ namespace fbognini.i18n.Resolvers
             this.localizer = localizer;
         }
 
-        public string Resolve(object source, object destination, string sourceMember, string destMember,
+        public string? Resolve(object source, object destination, string? sourceMember, string? destMember,
             ResolutionContext context)
         {
             var language = Thread.CurrentThread.CurrentCulture;
@@ -24,7 +24,7 @@ namespace fbognini.i18n.Resolvers
             return dest;
         }
 
-        private string Combine(params string[] paths)
+        private string? Combine(params string[] paths)
         {
             if (paths == null || paths.Length == 0)
                 return null;

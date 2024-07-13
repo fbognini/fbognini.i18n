@@ -29,12 +29,12 @@ namespace fbognini.i18n
             return services.AddI18N(settings);
         }
 
-        public static IServiceCollection AddI18N(this IServiceCollection services, IConfiguration configuration, Action<I18nSettings> options = null)
+        public static IServiceCollection AddI18N(this IServiceCollection services, IConfiguration configuration, Action<I18nSettings>? options = null)
         {
             return services.AddI18N(configuration.GetSection(nameof(I18nSettings)), options);
         }
 
-        public static IServiceCollection AddI18N(this IServiceCollection services, IConfigurationSection section, Action<I18nSettings> options = null)
+        public static IServiceCollection AddI18N(this IServiceCollection services, IConfigurationSection section, Action<I18nSettings>? options = null)
         {
             var settings = section.Get<I18nSettings>();
 
@@ -63,6 +63,7 @@ namespace fbognini.i18n
                 await context.Database.MigrateAsync(cancellationToken);
             }
         }
+
         public static async Task<IApplicationBuilder> InitializeI18N(this IApplicationBuilder app, CancellationToken cancellationToken = default)
         {
             // Create a new scope to retrieve scoped services

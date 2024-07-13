@@ -136,7 +136,7 @@ namespace fbognini.i18n
             }
         }
 
-        public Translation GetTranslation(string languageId, string textId, string resourceId)
+        public Translation? GetTranslation(string languageId, string textId, string resourceId)
         {
             return context.Translations.Find(languageId, textId, resourceId);
         }
@@ -200,7 +200,11 @@ namespace fbognini.i18n
             lock (context)
             {
                 context.Translations.RemoveRange(context.Translations.Where(x => x.TextId == textId && x.ResourceId == resourceId));
-                context.Texts.Remove(context.Texts.Find(textId, resourceId));
+                var text = context.Texts.Find(textId, resourceId);
+                if (text is not null)
+                {
+                    context.Texts.Remove(text);
+                }
                 context.SaveChanges();
             }
         }

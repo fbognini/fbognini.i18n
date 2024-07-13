@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace fbognini.i18n.Resolvers
 {
-    public class NotLocalizedPathResolver : IMemberValueResolver<object, object, string, string>
+    public class NotLocalizedPathResolver : IMemberValueResolver<object, object, string?, string?>
     {
         private readonly II18nRepository localizer;
         public NotLocalizedPathResolver(II18nRepository localizer)
@@ -16,7 +16,7 @@ namespace fbognini.i18n.Resolvers
             this.localizer = localizer;
         }
 
-        public string Resolve(object source, object destination, string sourceMember, string destMember,
+        public string? Resolve(object source, object destination, string? sourceMember, string? destMember,
             ResolutionContext context)
         {
             if (sourceMember == null)

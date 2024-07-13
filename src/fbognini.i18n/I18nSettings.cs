@@ -2,9 +2,6 @@
 
 namespace fbognini.i18n
 {
-
-    
-
     public class I18nSettings
     {
         public class LocalizerSettings
@@ -20,7 +17,7 @@ namespace fbognini.i18n
         public string ConnectionString { get; set; }
         public string Schema { get; set; } = "i18n";
         public bool UseCache { get; set; } = true;
-        public string CookieName { get; set; }
+        public string? CookieName { get; set; }
         public LocalizerSettings Localizer { get; set; } = new LocalizerSettings();
     }
 }

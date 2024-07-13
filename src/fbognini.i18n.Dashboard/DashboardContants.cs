@@ -13,6 +13,6 @@ namespace fbognini.i18n.Dashboard
         public const string ApiRouteName = "i18n-API";
         public const string ViewsRouteName = "i18n-Views";
 
-        internal const string Layout = "_i18nLayout
+        internal const string Layout = "_i18nLayout";
     }
 }

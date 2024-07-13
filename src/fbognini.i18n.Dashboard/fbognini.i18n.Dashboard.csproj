@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-		<Version>2.0.1</Version>
+		<Version>2.0.2</Version>
 		<Authors>Francesco Bognini</Authors>
 		<Company>Francesco Bognini</Company>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="fbognini.i18n" Version="8.0.1" />
+		<PackageReference Include="fbognini.i18n" Version="8.0.2" />
 		<PackageReference Include="fbognini.WebFramework" Version="10.0.1" />
 	</ItemGroup>
 

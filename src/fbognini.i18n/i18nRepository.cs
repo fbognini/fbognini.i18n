@@ -6,6 +6,7 @@ using fbognini.i18n.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -108,7 +109,7 @@ namespace fbognini.i18n
             }
         }
 
-        public IEnumerable<Translation> GetTranslations(string languageId, string textId, string resourceId, DateTime? since = null)
+        public IEnumerable<Translation> GetTranslations(string? languageId, string? textId, string? resourceId, DateTime? since = null)
         {
             (this as II18nRepository).DetachAllEntities();
 
@@ -255,7 +256,7 @@ namespace fbognini.i18n
             var headerRange = worksheet.Cell("A1").InsertData(header);
             headerRange.Style.Font.Bold = true;
 
-            worksheet.Cell(2, 1).InsertData(translations.Select(x => new string[] { x.LanguageId, x.TextId, x.ResourceId, x.Destination, x.Updated.ToString() }).ToArray());
+            worksheet.Cell(2, 1).InsertData(translations.Select(x => new string[] { x.LanguageId, x.TextId, x.ResourceId, x.Destination, x.Updated.ToString("O", CultureInfo.InvariantCulture) }).ToArray());
 
             using var ms = new MemoryStream();
 
@@ -367,7 +368,7 @@ namespace fbognini.i18n
                     TextId = textId,
                     ResourceId = resourceId,
                     Destination = destination,
-                    Updated = DateTime.Parse(updated)
+                    Updated = DateTime.ParseExact(updated, "O", CultureInfo.InvariantCulture)
                 });
             }
 

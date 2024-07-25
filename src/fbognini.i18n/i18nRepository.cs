@@ -351,7 +351,7 @@ namespace fbognini.i18n
 
             var worksheet = workbook.Worksheets.First();
 
-            int rowCount = worksheet.ColumnCount();
+            int rowCount = worksheet.LastRowUsed().RowNumber();
 
             var records = new List<Translation>();
             for (int i = 2; i <= rowCount; i++)

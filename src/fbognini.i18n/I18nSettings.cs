@@ -6,15 +6,15 @@ namespace fbognini.i18n
     {
         public class LocalizerSettings
         {
-            public string OverrideResourceId { get; set; }
-            public string BaseResourceId { get; set; }
+            public string? OverrideResourceId { get; set; }
+            public string? BaseResourceId { get; set; }
             public List<string> RemovePrefixs { get; set; } = new List<string>();
             public List<string> RemoveSuffixs { get; set; } = new List<string>();
 
             public bool CreateNewRecordWhenDoesNotExists { get; set; }
         }
 
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = string.Empty;
         public string Schema { get; set; } = "i18n";
         public bool UseCache { get; set; } = true;
         public string? CookieName { get; set; }

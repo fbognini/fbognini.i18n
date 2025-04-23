@@ -36,16 +36,17 @@ namespace fbognini.i18n
 
         public static IServiceCollection AddI18N(this IServiceCollection services, IConfigurationSection section, Action<I18nSettings>? options = null)
         {
-            var settings = section.Get<I18nSettings>();
+            var settings = section.Get<I18nSettings>()!;
+
+            services.Configure<I18nSettings>(section);
 
             if (options != null)
             {
                 options(settings);
-                services.Configure(options);
-            }
-            else
-            {
-                services.Configure<I18nSettings>(section);
+                services.PostConfigure<I18nSettings>(setting =>
+                {
+                    options(setting);
+                });
             }
 
             return services.AddI18N(settings);

@@ -36,7 +36,7 @@ namespace fbognini.i18n
 
         public static IServiceCollection AddI18N(this IServiceCollection services, IConfigurationSection section, Action<I18nSettings>? options = null)
         {
-            var settings = section.Get<I18nSettings>()!;
+            var settings = section.Get<I18nSettings>() ?? new I18nSettings();
 
             services.Configure<I18nSettings>(section);
 
@@ -96,7 +96,7 @@ namespace fbognini.i18n
                     defaultCulture = languages.First();
                 }
 
-                var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value
+                var options = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value
                     .SetDefaultCulture(defaultCulture.Id)
                     .AddSupportedCultures(languages.Select(x => x.Id).ToArray())
                     .AddSupportedUICultures(languages.Select(x => x.Id).ToArray());
